@@ -26,10 +26,3 @@ Please see the [LICENSE](./LICENSE) file for details.
 
 - **QRCode.js**  
   - URL: [https://davidshimjs.github.io/qrcodejs/](https://davidshimjs.github.io/qrcodejs/)  
-  - 軽量でブラウザ上で動く純粋JavaScript製QRコード生成ライブラリーです。  
-  - MITライセンスで商用利用や改変も自由にできます。  
-
-- **QRCode.js**  
-  - URL: [https://davidshimjs.github.io/qrcodejs/](https://davidshimjs.github.io/qrcodejs/)  
-  - A lightweight pure JavaScript library for generating QR codes in browsers.  
-  - Licensed under MIT License, free for commercial use and modification.
