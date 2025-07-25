@@ -1,0 +1,35 @@
+# 🎯 QR Code Generator
+
+テキストやURLからQRコードを生成するウェブアプリです。
+
+A web app for generating QR codes from text or URLs.
+
+---
+
+## 🪪 ライセンス / License
+
+このプロジェクトは MIT ライセンスのもとで公開されています。  
+ソフトウェアの利用、複製、改変、配布が自由に行えますが、  
+著作権表示と本ライセンスの記載をすべてのコピーまたは重要な部分に含める必要があります。  
+
+詳しくは [LICENSE](./LICENSE) ファイルをご確認ください。
+
+This project is licensed under the MIT License.  
+You are free to use, copy, modify, and distribute this software,  
+provided that the copyright notice and this license are included in all copies or substantial portions of the software.
+
+Please see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 📚 使用ライブラリー / Libraries Used
+
+- **QRCode.js**  
+  - URL: [https://davidshimjs.github.io/qrcodejs/](https://davidshimjs.github.io/qrcodejs/)  
+  - 軽量でブラウザ上で動く純粋JavaScript製QRコード生成ライブラリーです。  
+  - MITライセンスで商用利用や改変も自由にできます。  
+
+- **QRCode.js**  
+  - URL: [https://davidshimjs.github.io/qrcodejs/](https://davidshimjs.github.io/qrcodejs/)  
+  - A lightweight pure JavaScript library for generating QR codes in browsers.  
+  - Licensed under MIT License, free for commercial use and modification.
