@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Code Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="https://home.hamusata.f5.si/icon.svg" type="image/svg+xml" />
+  <style>
+    body {
+      background: linear-gradient(to bottom, #a0d8f7, #ffffff);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    input {
+      width: 80%;
+      max-width: 500px;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: 2px solid #3399ff;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #3399ff;
+      color: white;
+      cursor: pointer;
+    }
+
+    #qrcode {
+      margin-top: 2rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>QR Code Generator</h1>
+
+  <input type="text" id="inputText" placeholder="URL または テキストを入力" />
+  <br />
+  <button onclick="handleGenerate()">QR作成</button>
+
+  <div id="qrcode"></div>
+
+  <footer>
+    <div id="copyright"></div>
+  </footer>
+
+  <script>
+    // コピーライト表示
+    const baseYear = 2025;
+    const thisYear = new Date().getFullYear();
+    const copyright = baseYear === thisYear
+      ? `© ${thisYear} Hamusata`
+      : `© ${baseYear}–${thisYear} Hamusata`;
+    document.getElementById("copyright").textContent = copyright;
+
+    function isValidURL(str) {
+      try {
+        const url = new URL(str);
+        return url.protocol === "http:" || url.protocol === "https:";
+      } catch (_) {
+        return false;
+      }
+    }
+
+    async function shortenURL(url) {
+      try {
+        const res = await fetch("https://go.link-s.f5.si/api/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        if (res.ok && data.shortUrl) {
+          console.log("[ShortURL]", data.shortUrl);
+          return data.shortUrl;
+        } else {
+          alert("❌ 短縮失敗：" + (data.error || "不明なエラー"));
+          return null;
+        }
+      } catch (err) {
+        alert("❌ 通信エラーが発生しました。");
+        return null;
+      }
+    }
+
+    async function handleGenerate() {
+      const input = document.getElementById("inputText").value.trim();
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = "";
+
+      if (!input) {
+        alert("⚠️ 入力が空です");
+        return;
+      }
+
+      let qrData = input;
+
+      if (isValidURL(input)) {
+        const shortened = await shortenURL(input);
+        if (!shortened) return;
+        qrData = shortened;
+      }
+
+      QRCode.toCanvas(qrData, { width: 256 }, function (err, canvas) {
+        if (err) {
+          alert("QRコードの生成に失敗しました");
+          console.error(err);
+          return;
+        }
+        qrDiv.appendChild(canvas);
+      });
+    }
+  </script>
+</body>
+</html>
