@@ -1,158 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Code Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QR Code Generator</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
     :root {
-      --bg: #fefaf4; /* ライト背景 */
-      --text: #4a3f36;
-      --border: #c8b693;
-      --device-bg: #fffaf0;
-      --status-bg: #f5e8cc;
-      --status-text: #6b5841;
-      --input-bg: #fffdf8;
-      --button-bg: #d3b48c;
-      --button-hover: #c0a376;
-
-      --qr-bg-lightmode: #e0dcca; /* ライトモードのQR背景（薄グレー） */
-      --qr-bg-darkmode: #ffffff;  /* ダークモードのQR背景（白） */
-      --qr-border-light: #c8b693; /* ライトモード枠色 */
-      --qr-border-dark: #7d6a50;  /* ダークモード枠色 */
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1b1a18; /* ダーク背景 */
-        --text: #e9e0d3;
-        --border: #5e4f3a;
-        --device-bg: #2a2824;
-        --status-bg: #3a322a;
-        --status-text: #b0a38a;
-        --input-bg: #2c2925;
-        --button-bg: #7d6a50;
-        --button-hover: #9a8160;
-      }
+      --color-accent: #3399ff;
+      --color-accent-light: #7fbfff;
+      --color-error: #d33;
+      /* 春の柔らかいグラデーション（桜色〜薄緑〜空色） */
+      --bg-gradient: linear-gradient(
+        180deg,
+        #f9e6e7 0%,    /* 淡い桜色 */
+        #fce8d8 30%,   /* やわらかいクリーム色 */
+        #d9f0e6 70%,   /* 薄い若葉グリーン */
+        #a8d0e6 100%   /* 淡い空色 */
+      );
     }
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
     body {
-      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg-gradient);
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+      padding: 2rem;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      text-align: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    main.container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      max-width: 500px;
+      width: 100%;
       padding: 2rem;
-      background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.03), transparent 70%);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
     }
     h1 {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      letter-spacing: 0.1em;
-    }
-    input {
-      padding: 0.6rem 1rem;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      background: var(--input-bg);
-      font-size: 1.1rem;
-      width: 80%;
-      max-width: 500px;
+      font-size: 2.2rem;
       margin-bottom: 1.5rem;
-      color: var(--text);
+      color: #333;
+    }
+    input[type="text"] {
+      width: 90%;
+      max-width: 500px;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      border: 1.5px solid var(--color-accent);
+      border-radius: 14px;
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.15);
+      outline: none;
+      margin-bottom: 1rem;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    input:focus {
+      background-color: #f0f8ff;
+      border-color: #1673e6;
+    }
+    button {
+      padding: 0.85rem;
+      font-size: 1.15rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--color-accent);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, 0.7);
+      margin: 0.3rem;
+      width: 48%;
+      max-width: 240px;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1673e6;
     }
     #qrcode {
-      padding: 1rem;
-      border-radius: 16px;
-      display: none;
-      border: 4px solid var(--qr-border-light);
-      background: var(--qr-bg-lightmode);
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-    @media (prefers-color-scheme: dark) {
-      #qrcode {
-        border-color: var(--qr-border-dark);
-        background: var(--qr-bg-darkmode);
-      }
-    }
-    .footer {
       margin-top: 2rem;
-      font-size: 0.9rem;
-      color: var(--status-text);
+      display: flex;
+      justify-content: center;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
-    .link {
-      color: var(--text);
+    #downloadBtn {
+      display: none;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #666;
+      user-select: none;
+    }
+    a.link {
+      color: #666;
       text-decoration: none;
-      font-weight: bold;
     }
-    .link:hover {
+    a.link:hover {
       text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      button {
+        width: 100%;
+        max-width: none;
+      }
+      input[type="text"] {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>QR Code Generator</h1>
-  <input id="text" type="text" placeholder="Enter text or URL to generate QR" />
-  <div id="qrcode"></div>
-  <div class="footer" id="copyright">
-    <!-- JSで挿入 -->
-  </div>
+  <main class="container">
+    <h1>QR Code Generator</h1>
+    <input type="text" id="inputText" placeholder="URL または テキストを入力" autocomplete="off" />
+    <div>
+      <button onclick="handleGenerate()">QR作成</button>
+      <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
+    </div>
+    <div id="qrcode"></div>
+    <footer id="footer-copy"></footer>
+  </main>
 
-  <script src="https://davidshimjs.github.io/qrcodejs/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
-    const input = document.getElementById("text");
-    const qrBox = document.getElementById("qrcode");
-    const copy = document.getElementById("copyright");
-    const year = new Date().getFullYear();
+    (() => {
+      const baseYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const hostname = location.hostname;
+      const footer = document.getElementById("footer-copy");
 
-    const hostname = location.hostname;
-    let footerHTML = "";
+      let footerHTML = "";
 
-    if (hostname === "hamuzon.github.io") {
-      footerHTML = `&copy; 2025${year > 2025 ? "–" + year : ""} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-    } else if (hostname.includes("qr.hamusata.f5.si")) {
-      footerHTML = `&copy; 2025${year > 2025 ? "–" + year : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>`;
-    } else {
-      footerHTML = `&copy; 2025${year > 2025 ? "–" + year : ""} QR Code Generator`;
-    }
-    copy.innerHTML = footerHTML;
+      if (hostname === "hamuzon.github.io") {
+        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("qr.hamusata.f5.si")) {
+        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else {
+        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} QR Code Generator`;
+      }
 
-    function isDarkMode() {
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
+      if (footer) {
+        footer.innerHTML = footerHTML;
+      } else {
+        console.warn("footer element with id 'footer-copy' not found.");
+      }
+    })();
 
-    const rootStyles = getComputedStyle(document.documentElement);
-    const qrBgLight = rootStyles.getPropertyValue('--qr-bg-lightmode').trim();
-    const qrBgDark = rootStyles.getPropertyValue('--qr-bg-darkmode').trim();
+    async function handleGenerate() {
+      const input = document.getElementById("inputText").value.trim();
+      const qrDiv = document.getElementById("qrcode");
+      const downloadBtn = document.getElementById("downloadBtn");
+      qrDiv.innerHTML = "";
+      downloadBtn.style.display = "none";
 
-    let qr;
-    input.addEventListener("input", () => {
-      const val = input.value.trim();
-      if (!val) {
-        qrBox.innerHTML = "";
-        qrBox.style.display = "none";
+      if (!input) {
+        alert("⚠️ 入力が空です");
         return;
       }
-      qrBox.innerHTML = "";
 
-      qr = new QRCode(qrBox, {
-        text: val,
-        width: 256,
-        height: 256,
-        colorDark: "#000000",  // QRの黒部分
-        colorLight: isDarkMode() ? qrBgDark : qrBgLight,  // ページテーマに合わせて背景色反転
-        correctLevel: QRCode.CorrectLevel.H
+      QRCode.toCanvas(input, { width: 256 }, (err, canvas) => {
+        if (err) {
+          alert("QRコードの生成に失敗しました");
+          console.error(err);
+          return;
+        }
+        qrDiv.appendChild(canvas);
+        downloadBtn.style.display = "inline-block";
       });
-      qrBox.style.display = "inline-block";
-    });
+    }
+
+    function downloadQRCode() {
+      const canvas = document.querySelector("#qrcode canvas");
+      if (!canvas) {
+        alert("QRコードがまだ生成されていません。");
+        return;
+      }
+
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mi = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+      const filename = `QR-Code_${yyyy}-${mm}-${dd}_${hh}-${mi}-${ss}.png`;
+
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
   </script>
 </body>
 </html>
