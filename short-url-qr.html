@@ -37,10 +37,15 @@
       background-color: #3399ff;
       color: white;
       cursor: pointer;
+      margin: 0.5rem;
     }
 
     #qrcode {
       margin-top: 2rem;
+    }
+
+    #downloadBtn {
+      display: none;
     }
 
     footer {
@@ -66,6 +71,7 @@
   <input type="text" id="inputText" placeholder="URL または テキストを入力" />
   <br />
   <button onclick="handleGenerate()">QR作成</button>
+  <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
 
   <div id="qrcode"></div>
 
@@ -74,7 +80,6 @@
   </footer>
 
   <script>
-    // コピーライト表示（ホスト名による出し分け）
     const baseYear = 2025;
     const thisYear = new Date().getFullYear();
     const hostname = location.hostname;
@@ -123,7 +128,9 @@
     async function handleGenerate() {
       const input = document.getElementById("inputText").value.trim();
       const qrDiv = document.getElementById("qrcode");
+      const downloadBtn = document.getElementById("downloadBtn");
       qrDiv.innerHTML = "";
+      downloadBtn.style.display = "none";
 
       if (!input) {
         alert("⚠️ 入力が空です");
@@ -145,7 +152,32 @@
           return;
         }
         qrDiv.appendChild(canvas);
+        downloadBtn.style.display = "inline-block";
       });
+    }
+
+    function downloadQRCode() {
+      const canvas = document.querySelector("#qrcode canvas");
+      if (!canvas) {
+        alert("QRコードがまだ生成されていません。");
+        return;
+      }
+
+      // タイムスタンプでファイル名を作成
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const filename = `QR-Code_${yyyy}-${mm}-${dd}_${hh}-${mi}-${ss}.png`;
+
+      // ダウンロード処理
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     }
   </script>
 </body>
