@@ -10,13 +10,13 @@
       --color-accent: #3399ff;
       --color-accent-light: #7fbfff;
       --color-error: #d33;
-      /* 春の柔らかいグラデーション（桜色〜薄緑〜空色） */
+      --link-color: #4CAF50; /* 春らしい新芽カラー */
       --bg-gradient: linear-gradient(
         180deg,
-        #f9e6e7 0%,    /* 淡い桜色 */
-        #fce8d8 30%,   /* やわらかいクリーム色 */
-        #d9f0e6 70%,   /* 薄い若葉グリーン */
-        #a8d0e6 100%   /* 淡い空色 */
+        #f9e6e7 0%,
+        #fce8d8 30%,
+        #d9f0e6 70%,
+        #a8d0e6 100%
       );
     }
     * {
@@ -99,7 +99,7 @@
       user-select: none;
     }
     a.link {
-      color: #666;
+      color: var(--link-color);
       text-decoration: none;
     }
     a.link:hover {
@@ -125,7 +125,12 @@
       <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
     </div>
     <div id="qrcode"></div>
-    <footer id="footer-copy"></footer>
+    <footer id="footer-copy">
+      <p>このサービスは 
+        <a class="link" href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js ライブラリ</a>
+        を使用しています。
+      </p>
+    </footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
@@ -136,18 +141,18 @@
       const hostname = location.hostname;
       const footer = document.getElementById("footer-copy");
 
-      let footerHTML = "";
+      let copyHTML = "";
 
       if (hostname === "hamuzon.github.io") {
-        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
       } else if (hostname.includes("qr.hamusata.f5.si")) {
-        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
       } else {
-        footerHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} QR Code Generator`;
+        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} QR Code Generator`;
       }
 
       if (footer) {
-        footer.innerHTML = footerHTML;
+        footer.insertAdjacentHTML("afterbegin", `<div>${copyHTML}</div>`);
       } else {
         console.warn("footer element with id 'footer-copy' not found.");
       }
