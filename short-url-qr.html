@@ -48,6 +48,15 @@
       font-size: 0.85rem;
       color: #666;
     }
+
+    a.link {
+      color: #666;
+      text-decoration: none;
+    }
+
+    a.link:hover {
+      text-decoration: underline;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </head>
@@ -65,13 +74,21 @@
   </footer>
 
   <script>
-    // コピーライト表示
+    // コピーライト表示（ホスト名による出し分け）
     const baseYear = 2025;
     const thisYear = new Date().getFullYear();
-    const copyright = baseYear === thisYear
-      ? `© ${thisYear} Hamusata`
-      : `© ${baseYear}–${thisYear} Hamusata`;
-    document.getElementById("copyright").textContent = copyright;
+    const hostname = location.hostname;
+    let footerHTML = "";
+
+    if (hostname.includes("github.io")) {
+      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
+    } else if (hostname.includes("qr.hamusata.f5.si")) {
+      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>`;
+    } else {
+      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} QR Code Generator`;
+    }
+
+    document.getElementById("copyright").innerHTML = footerHTML;
 
     function isValidURL(str) {
       try {
