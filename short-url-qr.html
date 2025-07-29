@@ -6,38 +6,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="https://home.hamusata.f5.si/icon.svg" type="image/svg+xml" />
   <style>
+    :root {
+      --color-accent: #3399ff;
+      --color-accent-dark: #1673e6;
+      --color-bg-start: #87ceeb;
+      --color-bg-end: #ffffff;
+    }
+
     body {
-      background: linear-gradient(to bottom, #a0d8f7, #ffffff);
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      text-align: center;
+      background: linear-gradient(180deg, var(--color-bg-start), #a0d8f7, #c7e9ff, var(--color-bg-end));
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+      margin: 0;
       padding: 2rem;
-      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       font-size: 2.2rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: #333;
     }
 
-    input {
-      width: 80%;
-      max-width: 500px;
-      padding: 0.8rem;
+    input[type="text"] {
+      width: 100%;
+      padding: 0.9rem;
       font-size: 1.1rem;
-      border-radius: 12px;
-      border: 2px solid #3399ff;
+      border: 1.5px solid var(--color-accent);
+      border-radius: 14px;
+      outline: none;
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.15);
       margin-bottom: 1rem;
     }
 
+    input:focus {
+      background-color: #f0f8ff;
+      border-color: var(--color-accent-dark);
+    }
+
     button {
-      padding: 0.7rem 1.2rem;
+      padding: 0.85rem 1.4rem;
       font-size: 1rem;
+      font-weight: bold;
       border: none;
-      border-radius: 12px;
-      background-color: #3399ff;
+      border-radius: 14px;
+      background-color: var(--color-accent);
       color: white;
       cursor: pointer;
       margin: 0.5rem;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, 0.5);
+    }
+
+    button:hover {
+      background-color: var(--color-accent-dark);
     }
 
     #qrcode {
@@ -49,35 +83,37 @@
     }
 
     footer {
-      margin-top: 3rem;
+      margin-top: 2rem;
       font-size: 0.85rem;
-      color: #666;
+      color: #555;
     }
 
-    a.link {
-      color: #666;
+    footer a.link {
+      color: var(--color-accent);
       text-decoration: none;
     }
 
-    a.link:hover {
+    footer a.link:hover {
       text-decoration: underline;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </head>
 <body>
-  <h1>QR Code Generator</h1>
+  <main class="container">
+    <h1>QR Code Generator</h1>
 
-  <input type="text" id="inputText" placeholder="URL または テキストを入力" />
-  <br />
-  <button onclick="handleGenerate()">QR作成</button>
-  <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
+    <input type="text" id="inputText" placeholder="URL または テキストを入力" />
+    <br />
+    <button onclick="handleGenerate()">QR作成</button>
+    <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
 
-  <div id="qrcode"></div>
+    <div id="qrcode"></div>
 
-  <footer>
-    <div id="copyright"></div>
-  </footer>
+    <footer>
+      <div id="copyright"></div>
+    </footer>
+  </main>
 
   <script>
     const baseYear = 2025;
@@ -163,7 +199,6 @@
         return;
       }
 
-      // タイムスタンプでファイル名を作成
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -173,7 +208,6 @@
       const ss = String(now.getSeconds()).padStart(2, '0');
       const filename = `QR-Code_${yyyy}-${mm}-${dd}_${hh}-${mi}-${ss}.png`;
 
-      // ダウンロード処理
       const link = document.createElement("a");
       link.download = filename;
       link.href = canvas.toDataURL("image/png");
