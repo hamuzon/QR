@@ -2,87 +2,126 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>QR Code Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QR Code Generator</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
+    :root {
+      --color-accent: #3399ff;
+      --color-accent-light: #7fbfff;
+      --color-error: #d33;
+      --bg-gradient: linear-gradient(180deg, #87ceeb 0%, #a0d8f7 30%, #c7e9ff 70%, #ffffff 100%);
+    }
     * {
       box-sizing: border-box;
     }
-
     body {
-      background: linear-gradient(to bottom, #a0d8f7, #ffffff);
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      text-align: center;
+      background: var(--bg-gradient);
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
       padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       margin: 0;
-      color: #333;
     }
-
+    main.container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
     h1 {
       font-size: 2.2rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: #333;
     }
-
     input[type="text"] {
       width: 90%;
       max-width: 500px;
       padding: 0.8rem;
       font-size: 1.1rem;
-      border-radius: 12px;
-      border: 2px solid #3399ff;
+      border: 1.5px solid var(--color-accent);
+      border-radius: 14px;
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.15);
+      outline: none;
       margin-bottom: 1rem;
     }
-
+    input:focus {
+      background-color: #f0f8ff;
+      border-color: #1673e6;
+    }
     button {
-      padding: 0.7rem 1.2rem;
-      font-size: 1rem;
+      padding: 0.85rem;
+      font-size: 1.15rem;
+      font-weight: bold;
       border: none;
-      border-radius: 12px;
-      background-color: #3399ff;
+      border-radius: 14px;
+      background-color: var(--color-accent);
       color: white;
       cursor: pointer;
-      margin: 0.5rem;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, 0.7);
+      margin: 0.3rem;
+      width: 48%;
+      max-width: 240px;
+      user-select: none;
     }
-
+    button:hover {
+      background-color: #1673e6;
+    }
     #qrcode {
       margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
-
     #downloadBtn {
       display: none;
     }
-
     footer {
       margin-top: 3rem;
       font-size: 0.85rem;
       color: #666;
+      user-select: none;
     }
-
     a.link {
       color: #666;
       text-decoration: none;
     }
-
     a.link:hover {
       text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      button {
+        width: 100%;
+        max-width: none;
+      }
+      input[type="text"] {
+        width: 100%;
+      }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </head>
 <body>
-  <h1>QR Code Generator</h1>
-
-  <input type="text" id="inputText" placeholder="URL または テキストを入力" />
-  <br />
-  <button onclick="handleGenerate()">QR作成</button>
-  <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
-
-  <div id="qrcode"></div>
-
-  <footer>
-    <div id="copyright"></div>
-  </footer>
+  <main class="container">
+    <h1>QR Code Generator</h1>
+    <input type="text" id="inputText" placeholder="URL または テキストを入力" autocomplete="off" />
+    <div>
+      <button onclick="handleGenerate()">QR作成</button>
+      <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
+    </div>
+    <div id="qrcode"></div>
+    <footer>
+      <div id="copyright"></div>
+      <p>このサービスは <a href="https://go.link-s.f5.si" target="_blank" rel="noopener noreferrer">go.Link-s.f5.si API</a> と <a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js ライブラリ</a>を使用しています。</p>
+    </footer>
+  </main>
 
   <script>
     const baseYear = 2025;
@@ -90,10 +129,10 @@
     const hostname = location.hostname;
     let footerHTML = "";
 
-    if (hostname.includes("github.io")) {
-      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-    } else if (hostname.includes("qr.hamusata.f5.si")) {
-      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>`;
+    if (hostname === "hamuzon.github.io") {
+      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener">@hamuzon</a>`;
+    } else if (hostname === "qr.hamusata.f5.si") {
+      footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener">@hamusata</a>`;
     } else {
       footerHTML = `&copy; ${baseYear}${thisYear > baseYear ? "–" + thisYear : ""} QR Code Generator`;
     }
@@ -104,7 +143,7 @@
       try {
         const url = new URL(str);
         return url.protocol === "http:" || url.protocol === "https:";
-      } catch (_) {
+      } catch {
         return false;
       }
     }
@@ -124,7 +163,7 @@
           alert("❌ 短縮失敗：" + (data.error || "不明なエラー"));
           return null;
         }
-      } catch (err) {
+      } catch {
         alert("❌ 通信エラーが発生しました。");
         return null;
       }
@@ -150,7 +189,7 @@
         qrData = shortened;
       }
 
-      QRCode.toCanvas(qrData, { width: 256 }, function (err, canvas) {
+      QRCode.toCanvas(qrData, { width: 256 }, (err, canvas) => {
         if (err) {
           alert("QRコードの生成に失敗しました");
           console.error(err);
@@ -170,12 +209,15 @@
 
       const now = new Date();
       const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mi = String(now.getMinutes()).padStart(2, '0');
-      const ss = String(now.getSeconds()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mi = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
       const filename = `QR-Code_${yyyy}-${mm}-${dd}_${hh}-${mi}-${ss}.png`;
+
+      // 右クリックのファイル名も設定
+      canvas.setAttribute('download', filename);
 
       const link = document.createElement("a");
       link.download = filename;
