@@ -97,6 +97,7 @@ footer a:hover{text-decoration:underline;}
     <li>黒 = 黒コンクリート</li>
     <li>白 = 白コンクリート</li>
     <li>1セル = 1ブロック</li>
+    <li>自動で最少ブロック数に縮小</li>
   </ul>
 </div>
 <div id="buttonGroup">
@@ -116,31 +117,24 @@ let lastText="";
 async function generateMCQR(){
   let text = document.getElementById("inputText").value.trim();
   if(!text){ alert("⚠️ 入力が空です"); return; }
-  // 著作権文字をQRに埋め込み
+
+  // 著作権文字をQRに埋め込む
   text += "\n© 2025–" + new Date().getFullYear();
 
   lastText=text;
 
-  // 一時キャンバスで元QRサイズ取得
+  // 一時キャンバスで元QR取得
   const tempCanvas=document.createElement("canvas");
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
-  const origX = tempCanvas.width;
-  const origY = tempCanvas.height;
+  const origX=tempCanvas.width;
+  const origY=tempCanvas.height;
 
-  // 自動で最大サイズに縮小して縦横同じ比率
-  const parentWidth = tempCanvas.parentElement?.clientWidth || 512;
-  const scaleX = parentWidth / origX;
-  const scaleY = parentWidth / origY;
-  const scale = Math.min(scaleX, scaleY, 1);
-
-  const newWidth = Math.ceil(origX * scale);
-  const newHeight = Math.ceil(origY * scale);
-
-  const ctxTemp = tempCanvas.getContext("2d");
-  const imgData = ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+  const maxCanvasWidth = Math.min(window.innerWidth*0.95, 512); // 最大表示幅
+  const cellSize = Math.floor(maxCanvasWidth / Math.max(origX,origY)); // 最少ブロック
+  const newWidth = origX;
+  const newHeight = origY;
 
   const blockCanvas = document.getElementById("blockqr");
-  const cellSize = Math.floor(Math.min(parentWidth*0.95/newWidth,32));
   blockCanvas.width = newWidth * cellSize;
   blockCanvas.height = newHeight * cellSize;
   const ctx = blockCanvas.getContext("2d");
@@ -148,11 +142,12 @@ async function generateMCQR(){
   const mcBlack="#1D1D21";
   const mcWhite="#F9FFFE";
 
+  const ctxTemp = tempCanvas.getContext("2d");
+  const imgData = ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+
   for(let y=0;y<newHeight;y++){
     for(let x=0;x<newWidth;x++){
-      const origXPos=Math.floor(x/scale);
-      const origYPos=Math.floor(y/scale);
-      const i=(origYPos*tempCanvas.width+origXPos)*4;
+      const i = (y*tempCanvas.width+x)*4;
       const brightness=(imgData[i]+imgData[i+1]+imgData[i+2])/3;
       ctx.fillStyle = brightness<128 ? mcBlack : mcWhite;
       ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
