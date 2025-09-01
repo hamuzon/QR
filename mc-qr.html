@@ -39,15 +39,12 @@ h1{
   font-size:2rem;
   margin-bottom:1rem;
 }
-input[type="text"]{
-  width:90%;
-  max-width:500px;
-  padding:0.8rem;
+input[type="text"], input[type="number"]{
+  padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
-  border-radius:14px;
+  border-radius:10px;
   outline:none;
-  margin-bottom:0.5rem;
   transition:0.3s;
 }
 input:focus{border-color:var(--color-accent-light);}
@@ -55,7 +52,7 @@ input:focus{border-color:var(--color-accent-light);}
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  margin-bottom:0.5rem;
+  margin:0.5rem 0;
 }
 button{
   flex:1;
@@ -82,6 +79,10 @@ button:hover{background:var(--color-accent-light);}
   margin-top:0.5rem;
   text-align:left;
 }
+.guide label{
+  font-weight: normal;
+  font-size:0.85rem;
+}
 footer{
   margin-top:1.5rem;
   font-size:0.75rem;
@@ -102,57 +103,73 @@ footer a:hover{text-decoration:underline;}
 <main class="container">
   <h1>Minecraft-QR-Generator</h1>
   <input type="text" id="inputText" placeholder="URL or Text">
-  <div id="buttonGroup">
-    <button onclick="generateMCQR()">Generate QR</button>
-    <button onclick="downloadMCQR()">Download PNG</button>
-  </div>
-  <canvas id="blockqr"></canvas>
   <div class="guide">
     <p>📌 Minecraft 建築ガイド</p>
     <ul>
       <li>黒 = 黒コンクリート</li>
       <li>白 = 白コンクリート</li>
       <li>1セル = 1ブロック</li>
-      <li>セル境界線ありでブロック配置が分かりやすい</li>
     </ul>
+    <div style="margin-top:0.5rem;">
+      <label>最大横ブロック数: <input type="number" id="maxWidth" value="64" min="1" max="128" style="width:60px"></label>
+      <label>最大縦ブロック数: <input type="number" id="maxHeight" value="64" min="1" max="128" style="width:60px; margin-left:0.5rem;"></label>
+    </div>
   </div>
+  <div id="buttonGroup">
+    <button onclick="generateMCQR()">Generate QR</button>
+    <button onclick="downloadMCQR()">Download PNG</button>
+  </div>
+  <canvas id="blockqr"></canvas>
   <footer id="footer-copy"></footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
 let lastText="";
+
 (function(){
   const baseYear=2025;
   const currentYear=new Date().getFullYear();
   const footer=document.getElementById("footer-copy");
   if(footer){
-    footer.innerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank">@hamusata</a> | QRCode.js (MIT License) <a href="https://github.com/soldair/node-qrcode" target="_blank">https://github.com/soldair/node-qrcode</a>`;
+    footer.innerHTML=`QRCode.js (MIT License) <a href="https://github.com/soldair/node-qrcode" target="_blank">https://github.com/soldair/node-qrcode</a>`;
   }
 })();
 
 async function generateMCQR(){
   const text=document.getElementById("inputText").value.trim();
-  if(!text){alert("⚠️ Input is empty"); return;}
+  if(!text){ alert("⚠️ 入力が空です"); return; }
   lastText=text;
 
+  const MAX_WIDTH_BLOCKS = parseInt(document.getElementById("maxWidth").value)||64;
+  const MAX_HEIGHT_BLOCKS = parseInt(document.getElementById("maxHeight").value)||64;
+
+  // 一時キャンバスでQRサイズ取得
   const tempCanvas=document.createElement("canvas");
-  await QRCode.toCanvas(tempCanvas,text,{width:64,margin:1});
+  await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
+  const moduleCountX=tempCanvas.width;
+  const moduleCountY=tempCanvas.height;
+
+  if(moduleCountX>MAX_WIDTH_BLOCKS || moduleCountY>MAX_HEIGHT_BLOCKS){
+    alert(`⚠️ QRコードが大きすぎます。最大: ${MAX_WIDTH_BLOCKS}x${MAX_HEIGHT_BLOCKS} セル。生成されたQR: ${moduleCountX}x${moduleCountY}`);
+    return;
+  }
+
   const ctxTemp=tempCanvas.getContext("2d");
-  const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+  const imgData=ctxTemp.getImageData(0,0,moduleCountX,moduleCountY).data;
 
   const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/tempCanvas.width,32));
-  blockCanvas.width=tempCanvas.width*cellSize;
-  blockCanvas.height=tempCanvas.height*cellSize;
+  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/moduleCountX,32));
+  blockCanvas.width=moduleCountX*cellSize;
+  blockCanvas.height=moduleCountY*cellSize;
   const ctx=blockCanvas.getContext("2d");
 
   const mcBlack="#1D1D21";
   const mcWhite="#F9FFFE";
 
-  for(let y=0;y<tempCanvas.height;y++){
-    for(let x=0;x<tempCanvas.width;x++){
-      const i=(y*tempCanvas.width+x)*4;
+  for(let y=0;y<moduleCountY;y++){
+    for(let x=0;x<moduleCountX;x++){
+      const i=(y*moduleCountX+x)*4;
       const r=imgData[i],g=imgData[i+1],b=imgData[i+2];
       const brightness=(r+g+b)/3;
       ctx.fillStyle=brightness<128?mcBlack:mcWhite;
