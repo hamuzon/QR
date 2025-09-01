@@ -8,78 +8,98 @@
 <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
 <meta name="robots" content="index, follow">
 <style>
-body {
-  margin:0;
-  font-family:sans-serif;
-  background: linear-gradient(#80c71f 0 50%, #9c7a5c 50% 100%);
-  background-size: 32px 32px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  min-height:100vh;
-  color:#fff;
-  padding:1rem;
+:root{
+  --color-accent:#3399ff;
+  --color-accent-light:#7fbfff;
+  --bg-gradient: linear-gradient(180deg,#f9e6e7 0%,#fce8d8 30%,#d9f0e6 70%,#a8d0e6 100%);
 }
-main {
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  background: var(--bg-gradient);
+  padding:1rem;
+  color:#333;
+}
+main.container{
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
   width:100%;
   max-width:600px;
+  padding:2rem;
   text-align:center;
-  background: rgba(0,0,0,0.5);
-  padding:1rem;
-  border-radius:1rem;
-  box-sizing:border-box;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
-input {
-  width:100%;
-  padding:0.6rem;
-  margin-bottom:0.6rem;
+h1{
+  font-size:2rem;
+  margin-bottom:1rem;
+}
+input[type="text"]{
+  width:90%;
+  max-width:500px;
+  padding:0.8rem;
   font-size:1rem;
-  border-radius:0.5rem;
-  border:none;
-  box-sizing:border-box;
+  border:2px solid var(--color-accent);
+  border-radius:14px;
+  outline:none;
+  margin-bottom:0.5rem;
+  transition:0.3s;
 }
-button {
-  flex:1;
-  padding:0.6rem 1rem;
-  margin:0.2rem;
-  border:none;
-  border-radius:0.5rem;
-  background:#3399ff;
-  color:#fff;
-  cursor:pointer;
-  min-width:100px;
-}
-button:hover{background:#1673e6;}
-#buttonGroup {
+input:focus{border-color:var(--color-accent-light);}
+#buttonGroup{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
   margin-bottom:0.5rem;
 }
-#blockqr {
+button{
+  flex:1;
+  padding:0.6rem 1rem;
+  margin:0.2rem;
+  border:none;
+  border-radius:14px;
+  background: var(--color-accent);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+  min-width:120px;
+}
+button:hover{background:var(--color-accent-light);}
+#blockqr{
   margin-top:1rem;
   max-width:100%;
   image-rendering: pixelated;
   border:2px solid #555;
 }
-.guide {
+.guide{
   font-size:0.8rem;
-  color:#fff;
   margin-top:0.5rem;
+  text-align:left;
 }
+footer{
+  margin-top:1.5rem;
+  font-size:0.75rem;
+  color:#666;
+}
+footer a{
+  color:#3399ff;
+  text-decoration:none;
+}
+footer a:hover{text-decoration:underline;}
 @media(max-width:480px){
-  #buttonGroup{
-    flex-direction:column;
-  }
-  button{
-    width:100%;
-  }
+  #buttonGroup{flex-direction:column;}
+  button{width:100%;}
 }
 </style>
 </head>
 <body>
-<main>
+<main class="container">
   <h1>Minecraft-QR-Generator</h1>
   <input type="text" id="inputText" placeholder="URL or Text">
   <div id="buttonGroup">
@@ -89,14 +109,27 @@ button:hover{background:#1673e6;}
   <canvas id="blockqr"></canvas>
   <div class="guide">
     <p>📌 Minecraft 建築ガイド</p>
-    <p>黒 = 黒コンクリート, 白 = 白コンクリート</p>
-    <p>1セル = 1ブロックとして建築</p>
+    <ul>
+      <li>黒 = 黒コンクリート</li>
+      <li>白 = 白コンクリート</li>
+      <li>1セル = 1ブロック</li>
+      <li>セル境界線ありでブロック配置が分かりやすい</li>
+    </ul>
   </div>
+  <footer id="footer-copy"></footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
 let lastText="";
+(function(){
+  const baseYear=2025;
+  const currentYear=new Date().getFullYear();
+  const footer=document.getElementById("footer-copy");
+  if(footer){
+    footer.innerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank">@hamusata</a> | QRCode.js (MIT License) <a href="https://github.com/soldair/node-qrcode" target="_blank">https://github.com/soldair/node-qrcode</a>`;
+  }
+})();
 
 async function generateMCQR(){
   const text=document.getElementById("inputText").value.trim();
@@ -124,6 +157,8 @@ async function generateMCQR(){
       const brightness=(r+g+b)/3;
       ctx.fillStyle=brightness<128?mcBlack:mcWhite;
       ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
+      ctx.strokeStyle="#555";
+      ctx.strokeRect(x*cellSize,y*cellSize,cellSize,cellSize);
     }
   }
 }
@@ -137,11 +172,8 @@ function downloadMCQR(){
   link.click();
 }
 
-// 画面サイズ変更時にリサイズ
 window.addEventListener('resize',()=>{
-  if(lastText){
-    generateMCQR();
-  }
+  if(lastText){generateMCQR();}
 });
 </script>
 </body>
