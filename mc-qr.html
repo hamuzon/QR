@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="ja">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +5,8 @@
 <meta name="description" content="MinecraftのQR建築に最適なQRコードを生成します。黒と白のコンクリートでマイクラ風に表現。">
 <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
 <meta name="robots" content="index, follow">
+<link rel="icon" href="https://hamusata.f5.si/icon.svg" type="image/svg+xml">
+<link rel="icon" href="https://hamusata.f5.si/icon.png" type="image/png">
 <style>
 :root{
   --color-accent:#3399ff;
@@ -36,7 +36,7 @@ main.container{
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
 h1{ font-size:2rem; margin-bottom:1rem; }
-input[type="text"]{
+input[type="text"], input[type="number"]{
   padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
@@ -44,6 +44,7 @@ input[type="text"]{
   outline:none;
   text-align:center;
   transition:0.3s;
+  margin:0.2rem;
 }
 input:focus{ border-color: var(--color-accent-light); }
 #buttonGroup{ display:flex; flex-wrap:wrap; justify-content:center; margin:0.5rem 0; }
@@ -67,11 +68,6 @@ button:hover{ background: var(--color-accent-light); }
   image-rendering: pixelated;
   border:2px solid #555;
 }
-.guide{
-  font-size:0.8rem;
-  margin-top:0.5rem;
-  text-align:left;
-}
 footer{
   margin-top:1.5rem;
   font-size:0.75rem;
@@ -85,93 +81,3 @@ footer a:hover{text-decoration:underline;}
 }
 </style>
 </head>
-<body>
-<main class="container">
-<h1>Minecraft-QR-Generator</h1>
-<input type="text" id="inputText" placeholder="URL または テキストを入力">
-<div class="guide">
-  <p>📌 Minecraft 建築ガイド</p>
-  <ul>
-    <li>黒 = 黒コンクリート</li>
-    <li>白 = 白コンクリート</li>
-    <li>1セル = 1ブロック</li>
-  </ul>
-  <div style="margin-top:0.5rem;">
-    <label>最大ブロック数: <span id="autoSizeDisplay">自動</span></label>
-  </div>
-</div>
-<div id="buttonGroup">
-  <button onclick="generateMCQR()">Generate QR</button>
-  <button onclick="downloadMCQR()">Download PNG</button>
-</div>
-<canvas id="blockqr"></canvas>
-<footer id="footer-copy">&copy; <span id="year"></span></footer>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", ()=>{
-  const baseYear=2025;
-  const currentYear=new Date().getFullYear();
-  document.getElementById("year").textContent = (currentYear===baseYear)? baseYear : `${baseYear}–${currentYear}`;
-  const hostname = location.hostname;
-  const footer = document.getElementById("footer-copy");
-  if(hostname.includes("qr.link-s.f5.si")){
-    footer.innerHTML += ' <a href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>';
-  } else if(hostname.includes("hamusata.f5.si")){
-    footer.innerHTML += ' <a href="https://home.hamusata.f5.si" target="_blank">hamusata.f5.si</a>';
-  } else {
-    footer.innerHTML += ' QR Code Generator';
-  }
-});
-let lastText="";
-async function generateMCQR(){
-  let text=document.getElementById("inputText").value.trim();
-  if(!text){ alert("⚠️ 入力が空です"); return; }
-  text += "\n© 2025–" + new Date().getFullYear();
-  lastText=text;
-  const MIN_BLOCKS=8;
-  const MAX_CELL_SIZE=32;
-  const tempCanvas=document.createElement("canvas");
-  await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
-  const origSize=Math.max(tempCanvas.width,tempCanvas.height);
-  let blockCount=MIN_BLOCKS;
-  while(blockCount<origSize){ blockCount++; }
-  document.getElementById("autoSizeDisplay").textContent=blockCount;
-  const scale=blockCount/origSize;
-  const newWidth=Math.ceil(tempCanvas.width*scale);
-  const newHeight=Math.ceil(tempCanvas.height*scale);
-  const ctxTemp=tempCanvas.getContext("2d");
-  const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
-  const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.min(Math.floor(blockCanvas.parentElement.clientWidth*0.95/newWidth),MAX_CELL_SIZE);
-  blockCanvas.width=newWidth*cellSize;
-  blockCanvas.height=newHeight*cellSize;
-  const ctx=blockCanvas.getContext("2d");
-  const mcBlack="#1D1D21";
-  const mcWhite="#F9FFFE";
-  for(let y=0;y<newHeight;y++){
-    for(let x=0;x<newWidth;x++){
-      const origXPos=Math.floor(x/scale);
-      const origYPos=Math.floor(y/scale);
-      const i=(origYPos*tempCanvas.width+origXPos)*4;
-      const brightness=(imgData[i]+imgData[i+1]+imgData[i+2])/3;
-      ctx.fillStyle=brightness<128?mcBlack:mcWhite;
-      ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
-      ctx.strokeStyle="#555";
-      ctx.strokeRect(x*cellSize,y*cellSize,cellSize,cellSize);
-    }
-  }
-}
-function downloadMCQR(){
-  const canvas=document.getElementById("blockqr");
-  if(!canvas.width){alert("QRコードを生成してください"); return;}
-  const link=document.createElement("a");
-  link.download="Minecraft-QR.png";
-  link.href=canvas.toDataURL("image/png");
-  link.click();
-}
-window.addEventListener('resize',()=>{if(lastText){generateMCQR();}});
-</script>
-</body>
-</html>
