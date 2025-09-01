@@ -36,7 +36,7 @@ main.container{
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
 h1{ font-size:2rem; margin-bottom:1rem; }
-input[type="text"], input[type="number"]{
+input[type="text"]{
   padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
@@ -72,10 +72,6 @@ button:hover{ background: var(--color-accent-light); }
   margin-top:0.5rem;
   text-align:left;
 }
-.guide label{
-  font-weight: normal;
-  font-size:0.85rem;
-}
 footer{
   margin-top:1.5rem;
   font-size:0.75rem;
@@ -101,7 +97,7 @@ footer a:hover{text-decoration:underline;}
     <li>1セル = 1ブロック</li>
   </ul>
   <div style="margin-top:0.5rem;">
-    <label>最大ブロック数(縦横同じ): <input type="number" id="maxSize" value="32" min="1" max="128" style="width:60px"></label>
+    <label>最大ブロック数: <span id="autoSizeDisplay">自動</span></label>
   </div>
 </div>
 <div id="buttonGroup">
@@ -134,18 +130,21 @@ async function generateMCQR(){
   if(!text){ alert("⚠️ 入力が空です"); return; }
   text += "\n© 2025–" + new Date().getFullYear();
   lastText=text;
-  const MAX_BLOCKS=parseInt(document.getElementById("maxSize").value)||32;
+  const MIN_BLOCKS=8;
+  const MAX_CELL_SIZE=32;
   const tempCanvas=document.createElement("canvas");
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
-  const origX=tempCanvas.width;
-  const origY=tempCanvas.height;
-  const scale=Math.min(MAX_BLOCKS/origX, MAX_BLOCKS/origY,1);
-  const newWidth=Math.ceil(origX*scale);
-  const newHeight=Math.ceil(origY*scale);
+  const origSize=Math.max(tempCanvas.width,tempCanvas.height);
+  let blockCount=MIN_BLOCKS;
+  while(blockCount<origSize){ blockCount++; }
+  document.getElementById("autoSizeDisplay").textContent=blockCount;
+  const scale=blockCount/origSize;
+  const newWidth=Math.ceil(tempCanvas.width*scale);
+  const newHeight=Math.ceil(tempCanvas.height*scale);
   const ctxTemp=tempCanvas.getContext("2d");
   const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
   const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/newWidth,32));
+  const cellSize=Math.min(Math.floor(blockCanvas.parentElement.clientWidth*0.95/newWidth),MAX_CELL_SIZE);
   blockCanvas.width=newWidth*cellSize;
   blockCanvas.height=newHeight*cellSize;
   const ctx=blockCanvas.getContext("2d");
