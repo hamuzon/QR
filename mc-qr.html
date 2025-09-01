@@ -36,7 +36,7 @@ main.container{
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
 h1{ font-size:2rem; margin-bottom:1rem; }
-input[type="text"], input[type="number"]{
+input[type="text"]{
   padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
@@ -67,15 +67,6 @@ button:hover{ background: var(--color-accent-light); }
   image-rendering: pixelated;
   border:2px solid #555;
 }
-.guide{
-  font-size:0.8rem;
-  margin-top:0.5rem;
-  text-align:left;
-}
-.guide label{
-  font-weight: normal;
-  font-size:0.85rem;
-}
 footer{
   margin-top:1.5rem;
   font-size:0.75rem;
@@ -93,17 +84,6 @@ footer a:hover{text-decoration:underline;}
 <main class="container">
 <h1>Minecraft-QR-Generator</h1>
 <input type="text" id="inputText" placeholder="URL または テキストを入力">
-<div class="guide">
-  <p>📌 Minecraft 建築ガイド</p>
-  <ul>
-    <li>黒 = 黒コンクリート</li>
-    <li>白 = 白コンクリート</li>
-    <li>1セル = 1ブロック</li>
-  </ul>
-  <div style="margin-top:0.5rem;">
-    <label>最大ブロック数(縦横同じ): <input type="number" id="maxSize" value="64" min="1" max="128" style="width:60px"></label>
-  </div>
-</div>
 <div id="buttonGroup">
   <button onclick="generateMCQR()">Generate QR</button>
   <button onclick="downloadMCQR()">Download PNG</button>
@@ -115,7 +95,6 @@ footer a:hover{text-decoration:underline;}
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
-
 let lastText="";
 
 async function generateMCQR(){
@@ -125,15 +104,14 @@ async function generateMCQR(){
   text += "\n© 2025–" + new Date().getFullYear();
 
   lastText=text;
-  const MAX_BLOCKS = parseInt(document.getElementById("maxSize").value)||64;
 
-  // 一時キャンバスで元QRサイズ取得
   const tempCanvas=document.createElement("canvas");
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
   const origX = tempCanvas.width;
   const origY = tempCanvas.height;
 
-  // 自動縮小スケール
+  // 縦横ブロック数を自動計算
+  const MAX_BLOCKS = Math.min(origX, origY, 64); // 64ブロック以内に制限
   const scale = Math.min(MAX_BLOCKS/origX, MAX_BLOCKS/origY,1);
   const newWidth = Math.ceil(origX*scale);
   const newHeight = Math.ceil(origY*scale);
@@ -143,7 +121,7 @@ async function generateMCQR(){
 
   const blockCanvas=document.getElementById("blockqr");
 
-  // 自動セルサイズ計算
+  // セルサイズ自動計算（32px以上も可能）
   const MIN_CELL_SIZE = 4;
   const MAX_CELL_SIZE = 64;
   let cellSize = Math.floor(Math.min(
