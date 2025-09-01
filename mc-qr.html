@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Minecraft-QR-Generator</title>
 <meta name="description" content="MinecraftのQR建築に最適なQRコードを生成します。黒と白のコンクリートでマイクラ風に表現。">
 <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
@@ -36,7 +36,7 @@ main.container{
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
 h1{ font-size:2rem; margin-bottom:1rem; }
-input[type="text"], input[type="number"]{
+input[type="text"]{
   padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
@@ -44,6 +44,7 @@ input[type="text"], input[type="number"]{
   outline:none;
   text-align:center;
   transition:0.3s;
+  width:90%;
 }
 input:focus{ border-color: var(--color-accent-light); }
 #buttonGroup{ display:flex; flex-wrap:wrap; justify-content:center; margin:0.5rem 0; }
@@ -72,10 +73,7 @@ button:hover{ background: var(--color-accent-light); }
   margin-top:0.5rem;
   text-align:left;
 }
-.guide label{
-  font-weight: normal;
-  font-size:0.85rem;
-}
+.guide ul{padding-left:1.2rem;}
 footer{
   margin-top:1.5rem;
   font-size:0.75rem;
@@ -100,9 +98,6 @@ footer a:hover{text-decoration:underline;}
     <li>白 = 白コンクリート</li>
     <li>1セル = 1ブロック</li>
   </ul>
-  <div style="margin-top:0.5rem;">
-    <label>最大ブロック数(縦横同じ): <input type="number" id="maxSize" value="64" min="1" max="128" style="width:60px"></label>
-  </div>
 </div>
 <div id="buttonGroup">
   <button onclick="generateMCQR()">Generate QR</button>
@@ -125,7 +120,6 @@ async function generateMCQR(){
   text += "\n© 2025–" + new Date().getFullYear();
 
   lastText=text;
-  const MAX_BLOCKS = parseInt(document.getElementById("maxSize").value)||64;
 
   // 一時キャンバスで元QRサイズ取得
   const tempCanvas=document.createElement("canvas");
@@ -133,18 +127,23 @@ async function generateMCQR(){
   const origX = tempCanvas.width;
   const origY = tempCanvas.height;
 
-  const scale = Math.min(MAX_BLOCKS/origX, MAX_BLOCKS/origY,1);
-  const newWidth = Math.ceil(origX*scale);
-  const newHeight = Math.ceil(origY*scale);
+  // 自動で最大サイズに縮小して縦横同じ比率
+  const parentWidth = tempCanvas.parentElement?.clientWidth || 512;
+  const scaleX = parentWidth / origX;
+  const scaleY = parentWidth / origY;
+  const scale = Math.min(scaleX, scaleY, 1);
 
-  const ctxTemp=tempCanvas.getContext("2d");
-  const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+  const newWidth = Math.ceil(origX * scale);
+  const newHeight = Math.ceil(origY * scale);
 
-  const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/newWidth,32));
-  blockCanvas.width=newWidth*cellSize;
-  blockCanvas.height=newHeight*cellSize;
-  const ctx=blockCanvas.getContext("2d");
+  const ctxTemp = tempCanvas.getContext("2d");
+  const imgData = ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+
+  const blockCanvas = document.getElementById("blockqr");
+  const cellSize = Math.floor(Math.min(parentWidth*0.95/newWidth,32));
+  blockCanvas.width = newWidth * cellSize;
+  blockCanvas.height = newHeight * cellSize;
+  const ctx = blockCanvas.getContext("2d");
 
   const mcBlack="#1D1D21";
   const mcWhite="#F9FFFE";
@@ -155,7 +154,7 @@ async function generateMCQR(){
       const origYPos=Math.floor(y/scale);
       const i=(origYPos*tempCanvas.width+origXPos)*4;
       const brightness=(imgData[i]+imgData[i+1]+imgData[i+2])/3;
-      ctx.fillStyle=brightness<128?mcBlack:mcWhite;
+      ctx.fillStyle = brightness<128 ? mcBlack : mcWhite;
       ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
       ctx.strokeStyle="#555";
       ctx.strokeRect(x*cellSize,y*cellSize,cellSize,cellSize);
