@@ -7,19 +7,83 @@
 <meta name="description" content="MinecraftのQR建築に最適なQRコードを生成します。黒と白のコンクリートでマイクラ風に表現。">
 <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
 <style>
-body{margin:0;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;background:linear-gradient(180deg,#f9e6e7 0%,#fce8d8 30%,#d9f0e6 70%,#a8d0e6 100%);padding:1rem;color:#333;}
-main.container{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border-radius:1.5rem;width:100%;max-width:90vw;padding:2rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.1);}
-h1{font-size:2rem;margin-bottom:1rem;}
-input[type="text"]{padding:0.5rem;font-size:1rem;border:2px solid #3399ff;border-radius:10px;outline:none;text-align:center;transition:0.3s;width:90%;}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  background:linear-gradient(180deg,#f9e6e7 0%,#fce8d8 30%,#d9f0e6 70%,#a8d0e6 100%);
+  padding:1rem;
+  color:#333;
+}
+main.container{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(10px);
+  border-radius:1.5rem;
+  width:100%;
+  max-width:90vw;
+  padding:2rem;
+  text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+}
+h1{
+  font-size:2rem;
+  margin-bottom:1rem;
+}
+input[type="text"]{
+  padding:0.5rem;
+  font-size:1rem;
+  border:2px solid #3399ff;
+  border-radius:10px;
+  outline:none;
+  text-align:center;
+  transition:0.3s;
+  width:90%;
+}
 input:focus{border-color:#7fbfff;}
-#buttonGroup{display:flex;flex-wrap:wrap;justify-content:center;margin:0.5rem 0;}
-button{flex:1;padding:0.6rem 1rem;margin:0.2rem;border:none;border-radius:14px;background:#3399ff;color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;min-width:120px;}
+#buttonGroup{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:0.5rem 0;
+}
+button{
+  flex:1;
+  padding:0.6rem 1rem;
+  margin:0.2rem;
+  border:none;
+  border-radius:14px;
+  background:#3399ff;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+  min-width:120px;
+}
 button:hover{background:#7fbfff;}
-#blockqr{margin-top:1rem;width:100%;height:auto;border:2px solid #555;image-rendering:pixelated;}
-footer{margin-top:1.5rem;font-size:0.75rem;color:#666;}
-footer a{color:#3399ff;text-decoration:none;}
+#blockqr{
+  margin-top:1rem;
+  width:100%;
+  height:auto;
+  border:2px solid #555;
+  image-rendering:pixelated;
+}
+footer{
+  margin-top:1.5rem;
+  font-size:0.75rem;
+  color:#666;
+}
+footer a{
+  color:#3399ff;
+  text-decoration:none;
+}
 footer a:hover{text-decoration:underline;}
-@media(max-width:480px){#buttonGroup{flex-direction:column;}button{width:100%;}}
+@media(max-width:480px){
+  #buttonGroup{flex-direction:column;}
+  button{width:100%;}
+}
 </style>
 </head>
 <body>
@@ -31,13 +95,17 @@ footer a:hover{text-decoration:underline;}
 <button onclick="downloadMCQR()">Download PNG</button>
 </div>
 <canvas id="blockqr"></canvas>
-<footer id="footer-copy">&copy; 2025–<span id="year"></span> <a href="https://github.com/soldair/node-qrcode" target="_blank">QRCode.js</a></footer>
+<footer id="footer-copy">
+&copy; 2025–<span id="year"></span> 
+<a href="https://github.com/soldair/node-qrcode" target="_blank">QRCode.js</a>
+</footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
 document.getElementById("year").textContent=new Date().getFullYear();
 let lastText="";
+
 async function generateMCQR(){
   let text=document.getElementById("inputText").value.trim();
   if(!text){alert("⚠️ 入力が空です");return;}
@@ -48,11 +116,10 @@ async function generateMCQR(){
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
   const modules=tempCanvas.width;
 
-  // ブラウザ幅に応じてキャンバスサイズ決定
+  // ブラウザ幅に応じて自動リサイズ
   const containerWidth=document.querySelector('main.container').clientWidth;
   const canvasSize=Math.floor(containerWidth*0.95);
   const cellSize=Math.floor(canvasSize/modules);
-
   const finalSize=cellSize*modules;
 
   const canvas=document.getElementById("blockqr");
@@ -84,7 +151,7 @@ function downloadMCQR(){
   link.click();
 }
 
-// ウィンドウリサイズ時に自動再生成
+// リサイズ時に自動再生成
 window.addEventListener('resize',()=>{if(lastText){generateMCQR();}});
 </script>
 </body>
