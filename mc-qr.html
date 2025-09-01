@@ -30,7 +30,7 @@ main.container{
   backdrop-filter: blur(10px);
   border-radius: 1.5rem;
   width:100%;
-  max-width:600px;
+  max-width:640px;
   padding:2rem;
   text-align:center;
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
@@ -46,6 +46,7 @@ input[type="text"], input[type="number"]{
   border-radius:10px;
   outline:none;
   transition:0.3s;
+  text-align:center;
 }
 input:focus{border-color:var(--color-accent-light);}
 #buttonGroup{
@@ -128,8 +129,6 @@ footer a:hover{text-decoration:underline;}
 let lastText="";
 
 (function(){
-  const baseYear=2025;
-  const currentYear=new Date().getFullYear();
   const footer=document.getElementById("footer-copy");
   if(footer){
     footer.innerHTML=`QRCode.js (MIT License) <a href="https://github.com/soldair/node-qrcode" target="_blank">https://github.com/soldair/node-qrcode</a>`;
@@ -147,16 +146,18 @@ async function generateMCQR(){
   // 一時キャンバスでQRサイズ取得
   const tempCanvas=document.createElement("canvas");
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
-  const moduleCountX=tempCanvas.width;
-  const moduleCountY=tempCanvas.height;
+  let moduleCountX=tempCanvas.width;
+  let moduleCountY=tempCanvas.height;
 
-  if(moduleCountX>MAX_WIDTH_BLOCKS || moduleCountY>MAX_HEIGHT_BLOCKS){
-    alert(`⚠️ QRコードが大きすぎます。最大: ${MAX_WIDTH_BLOCKS}x${MAX_HEIGHT_BLOCKS} セル。生成されたQR: ${moduleCountX}x${moduleCountY}`);
-    return;
-  }
+  // 最大ブロック数に合わせて比率を維持し縮小
+  const scaleX = MAX_WIDTH_BLOCKS / moduleCountX;
+  const scaleY = MAX_HEIGHT_BLOCKS / moduleCountY;
+  const scale = Math.min(scaleX, scaleY, 1); // 1より大きくはしない
+  moduleCountX = Math.floor(moduleCountX * scale);
+  moduleCountY = Math.floor(moduleCountY * scale);
 
   const ctxTemp=tempCanvas.getContext("2d");
-  const imgData=ctxTemp.getImageData(0,0,moduleCountX,moduleCountY).data;
+  const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
 
   const blockCanvas=document.getElementById("blockqr");
   const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/moduleCountX,32));
@@ -169,7 +170,10 @@ async function generateMCQR(){
 
   for(let y=0;y<moduleCountY;y++){
     for(let x=0;x<moduleCountX;x++){
-      const i=(y*moduleCountX+x)*4;
+      // 元の画像から対応する座標をサンプリング
+      const origX=Math.floor(x/scale);
+      const origY=Math.floor(y/scale);
+      const i=(origY*tempCanvas.width+origX)*4;
       const r=imgData[i],g=imgData[i+1],b=imgData[i+2];
       const brightness=(r+g+b)/3;
       ctx.fillStyle=brightness<128?mcBlack:mcWhite;
