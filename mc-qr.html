@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minecraft-QR-Generator</title>
+  <meta name="description" content="MinecraftのQR建築に最適なQRコードを生成します。黒と白のコンクリートでマイクラ風に表現。">
+  <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
+  <meta name="robots" content="index, follow">
+  <style>
+    body {
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      color: #fff;
+    }
+    main {
+      text-align: center;
+    }
+    input {
+      padding: 0.6rem;
+      font-size: 1rem;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 0.6rem;
+      border: 2px solid #3399ff;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.4rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.6rem;
+      background: #3399ff;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1673e6;
+    }
+    canvas {
+      margin-top: 1.5rem;
+      image-rendering: pixelated;
+      border: 2px solid #555;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Minecraft-QR-Generator</h1>
+    <input type="text" id="inputText" placeholder="URL or Text">
+    <br>
+    <button onclick="generateMCQR()">Generate QR</button>
+    <canvas id="blockqr"></canvas>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script>
+    async function generateMCQR() {
+      const text = document.getElementById("inputText").value.trim();
+      if (!text) { alert("⚠️ Input is empty"); return; }
+
+      // 中間キャンバスでQR生成
+      const tempCanvas = document.createElement("canvas");
+      await QRCode.toCanvas(tempCanvas, text, { width: 64, margin: 1 });
+
+      const ctxTemp = tempCanvas.getContext("2d");
+      const imgData = ctxTemp.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
+
+      // 出力キャンバス
+      const blockCanvas = document.getElementById("blockqr");
+      const size = 16; // 1セルあたりのブロックサイズ
+      blockCanvas.width = tempCanvas.width * size;
+      blockCanvas.height = tempCanvas.height * size;
+      const ctx = blockCanvas.getContext("2d");
+
+      // コンクリート色
+      const mcBlack = "#1D1D21"; // 黒コンクリート
+      const mcWhite = "#F9FFFE"; // 白コンクリート
+
+      for (let y = 0; y < tempCanvas.height; y++) {
+        for (let x = 0; x < tempCanvas.width; x++) {
+          const index = (y * tempCanvas.width + x) * 4;
+          const r = imgData[index];
+          const g = imgData[index+1];
+          const b = imgData[index+2];
+          const brightness = (r + g + b) / 3;
+          ctx.fillStyle = brightness < 128 ? mcBlack : mcWhite;
+          ctx.fillRect(x*size, y*size, size, size);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
