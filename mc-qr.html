@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Minecraft-QR-Generator</title>
 <meta name="description" content="MinecraftのQR建築に最適なQRコードを生成します。黒と白のコンクリートでマイクラ風に表現。">
 <meta name="keywords" content="Minecraft, QRコード, QR, コンクリート, マイクラ, 建築, QR generator, MC QR">
@@ -35,26 +35,18 @@ main.container{
   text-align:center;
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
 }
-h1{
-  font-size:2rem;
-  margin-bottom:1rem;
-}
+h1{ font-size:2rem; margin-bottom:1rem; }
 input[type="text"], input[type="number"]{
   padding:0.5rem;
   font-size:1rem;
   border:2px solid var(--color-accent);
   border-radius:10px;
   outline:none;
-  transition:0.3s;
   text-align:center;
+  transition:0.3s;
 }
-input:focus{border-color:var(--color-accent-light);}
-#buttonGroup{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin:0.5rem 0;
-}
+input:focus{ border-color: var(--color-accent-light); }
+#buttonGroup{ display:flex; flex-wrap:wrap; justify-content:center; margin:0.5rem 0; }
 button{
   flex:1;
   padding:0.6rem 1rem;
@@ -68,7 +60,7 @@ button{
   transition:0.3s;
   min-width:120px;
 }
-button:hover{background:var(--color-accent-light);}
+button:hover{ background: var(--color-accent-light); }
 #blockqr{
   margin-top:1rem;
   max-width:100%;
@@ -89,10 +81,7 @@ footer{
   font-size:0.75rem;
   color:#666;
 }
-footer a{
-  color:#3399ff;
-  text-decoration:none;
-}
+footer a{ color:#3399ff; text-decoration:none; }
 footer a:hover{text-decoration:underline;}
 @media(max-width:480px){
   #buttonGroup{flex-direction:column;}
@@ -102,80 +91,70 @@ footer a:hover{text-decoration:underline;}
 </head>
 <body>
 <main class="container">
-  <h1>Minecraft-QR-Generator</h1>
-  <input type="text" id="inputText" placeholder="URL or Text">
-  <div class="guide">
-    <p>📌 Minecraft 建築ガイド</p>
-    <ul>
-      <li>黒 = 黒コンクリート</li>
-      <li>白 = 白コンクリート</li>
-      <li>1セル = 1ブロック</li>
-    </ul>
-    <div style="margin-top:0.5rem;">
-      <label>最大横ブロック数: <input type="number" id="maxWidth" value="64" min="1" max="128" style="width:60px"></label>
-      <label>最大縦ブロック数: <input type="number" id="maxHeight" value="64" min="1" max="128" style="width:60px; margin-left:0.5rem;"></label>
-    </div>
+<h1>Minecraft-QR-Generator</h1>
+<input type="text" id="inputText" placeholder="URL または テキストを入力">
+<div class="guide">
+  <p>📌 Minecraft 建築ガイド</p>
+  <ul>
+    <li>黒 = 黒コンクリート</li>
+    <li>白 = 白コンクリート</li>
+    <li>1セル = 1ブロック</li>
+  </ul>
+  <div style="margin-top:0.5rem;">
+    <label>最大ブロック数(縦横同じ): <input type="number" id="maxSize" value="64" min="1" max="128" style="width:60px"></label>
   </div>
-  <div id="buttonGroup">
-    <button onclick="generateMCQR()">Generate QR</button>
-    <button onclick="downloadMCQR()">Download PNG</button>
-  </div>
-  <canvas id="blockqr"></canvas>
-  <footer id="footer-copy"></footer>
+</div>
+<div id="buttonGroup">
+  <button onclick="generateMCQR()">Generate QR</button>
+  <button onclick="downloadMCQR()">Download PNG</button>
+</div>
+<canvas id="blockqr"></canvas>
+<footer id="footer-copy">&copy; 2025–<span id="year"></span> <a href="https://github.com/soldair/node-qrcode" target="_blank">QRCode.js</a></footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
 let lastText="";
 
-(function(){
-  const footer=document.getElementById("footer-copy");
-  if(footer){
-    footer.innerHTML=`QRCode.js (MIT License) <a href="https://github.com/soldair/node-qrcode" target="_blank">https://github.com/soldair/node-qrcode</a>`;
-  }
-})();
-
 async function generateMCQR(){
-  const text=document.getElementById("inputText").value.trim();
+  let text = document.getElementById("inputText").value.trim();
   if(!text){ alert("⚠️ 入力が空です"); return; }
+  // 著作権文字をQRに埋め込み
+  text += "\n© 2025–" + new Date().getFullYear();
+
   lastText=text;
+  const MAX_BLOCKS = parseInt(document.getElementById("maxSize").value)||64;
 
-  const MAX_WIDTH_BLOCKS = parseInt(document.getElementById("maxWidth").value)||64;
-  const MAX_HEIGHT_BLOCKS = parseInt(document.getElementById("maxHeight").value)||64;
-
-  // 一時キャンバスでQRサイズ取得
+  // 一時キャンバスで元QRサイズ取得
   const tempCanvas=document.createElement("canvas");
   await QRCode.toCanvas(tempCanvas,text,{width:0,margin:1});
-  let moduleCountX=tempCanvas.width;
-  let moduleCountY=tempCanvas.height;
+  const origX = tempCanvas.width;
+  const origY = tempCanvas.height;
 
-  // 最大ブロック数に合わせて比率を維持し縮小
-  const scaleX = MAX_WIDTH_BLOCKS / moduleCountX;
-  const scaleY = MAX_HEIGHT_BLOCKS / moduleCountY;
-  const scale = Math.min(scaleX, scaleY, 1); // 1より大きくはしない
-  moduleCountX = Math.floor(moduleCountX * scale);
-  moduleCountY = Math.floor(moduleCountY * scale);
+  const scale = Math.min(MAX_BLOCKS/origX, MAX_BLOCKS/origY,1);
+  const newWidth = Math.ceil(origX*scale);
+  const newHeight = Math.ceil(origY*scale);
 
   const ctxTemp=tempCanvas.getContext("2d");
   const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
 
   const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/moduleCountX,32));
-  blockCanvas.width=moduleCountX*cellSize;
-  blockCanvas.height=moduleCountY*cellSize;
+  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/newWidth,32));
+  blockCanvas.width=newWidth*cellSize;
+  blockCanvas.height=newHeight*cellSize;
   const ctx=blockCanvas.getContext("2d");
 
   const mcBlack="#1D1D21";
   const mcWhite="#F9FFFE";
 
-  for(let y=0;y<moduleCountY;y++){
-    for(let x=0;x<moduleCountX;x++){
-      // 元の画像から対応する座標をサンプリング
-      const origX=Math.floor(x/scale);
-      const origY=Math.floor(y/scale);
-      const i=(origY*tempCanvas.width+origX)*4;
-      const r=imgData[i],g=imgData[i+1],b=imgData[i+2];
-      const brightness=(r+g+b)/3;
+  for(let y=0;y<newHeight;y++){
+    for(let x=0;x<newWidth;x++){
+      const origXPos=Math.floor(x/scale);
+      const origYPos=Math.floor(y/scale);
+      const i=(origYPos*tempCanvas.width+origXPos)*4;
+      const brightness=(imgData[i]+imgData[i+1]+imgData[i+2])/3;
       ctx.fillStyle=brightness<128?mcBlack:mcWhite;
       ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
       ctx.strokeStyle="#555";
