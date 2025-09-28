@@ -23,7 +23,7 @@ body {
   padding: 2rem 2.5rem;
   border-radius: 1rem;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  max-width: 960px;
+  max-width: 720px;
   width: 100%;
   text-align: center;
   margin: auto;
@@ -45,7 +45,7 @@ h1 {
   color: #555;
 }
 .btn-wrapper {
-  flex: 1 1 220px;
+  flex: 1 1 calc(50% - 1rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,6 +88,10 @@ footer {
 }
 a.link { color: #666; text-decoration: none; }
 a.link:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .btn-wrapper { flex: 1 1 100%; }
+}
 </style>
 </head>
 <body>
