@@ -12,9 +12,7 @@
   --bg-gradient: linear-gradient(180deg, #fde2e2 0%, #fff1e6 30%, #d0e7f9 70%, #a8d0e6 100%);
   --link-color: #28a745;
 }
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 body {
   background: var(--bg-gradient);
   font-family: 'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
@@ -38,13 +36,8 @@ main.container {
   display: flex;
   flex-direction: column;
 }
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 1rem;
-}
-.mode-selector {
-  margin-bottom: 1.5rem;
-}
+h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+.mode-selector { margin-bottom: 1.5rem; }
 .mode-selector button {
   background-color: var(--color-accent-light);
   border: none;
@@ -57,12 +50,8 @@ h1 {
   box-shadow: 0 3px 6px rgba(51,153,255,0.3);
   transition: background 0.3s;
 }
-.mode-selector button.active {
-  background-color: var(--color-accent);
-}
-.mode-selector button:hover {
-  background-color: var(--color-accent);
-}
+.mode-selector button.active { background-color: var(--color-accent); }
+.mode-selector button:hover { background-color: var(--color-accent); }
 input[type="text"] {
   width: 90%;
   padding: 0.8rem;
@@ -74,10 +63,7 @@ input[type="text"] {
   margin-bottom: 1.5rem;
   transition: background-color 0.3s, border-color 0.3s;
 }
-input:focus {
-  background-color: #f0f8ff;
-  border-color: #1673e6;
-}
+input:focus { background-color: #f0f8ff; border-color: #1673e6; }
 button.action {
   padding: 0.85rem;
   font-size: 1.15rem;
@@ -93,17 +79,9 @@ button.action {
   user-select: none;
   transition: background-color 0.3s ease;
 }
-button.action:hover {
-  background-color: #1673e6;
-}
-#qrcode {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-}
-#downloadBtn {
-  display: none;
-}
+button.action:hover { background-color: #1673e6; }
+#qrcode { margin-top: 2rem; display: flex; justify-content: center; }
+#downloadBtn { display: none; }
 footer {
   margin-top: 2.5rem;
   font-size: 0.85rem;
@@ -111,139 +89,108 @@ footer {
   user-select: none;
   color: inherit;
 }
-a.link {
-  color: var(--link-color);
-  text-decoration: none;
-}
-a.link:hover {
-  text-decoration: underline;
-}
+a.link { color: var(--link-color); text-decoration: none; }
+a.link:hover { text-decoration: underline; }
 @media(max-width:480px){
-  button.action {
-    width: 100%;
-  }
-  input[type="text"] {
-    width: 100%;
-  }
+  button.action { width: 100%; }
+  input[type="text"] { width: 100%; }
 }
 </style>
 </head>
 <body>
-
 <main class="container">
-
-  <h1>QRコードツール – QR Code Tool</h1>
-
-  <div class="mode-selector">
-    <button class="active" data-mode="texturl">テキスト/URL</button>
-    <button data-mode="email">メール</button>
-    <button data-mode="tel">電話</button>
-  </div>
-
-  <input type="text" id="inputText" placeholder="テキストまたはURLを入力" autocomplete="off">
-
-  <div>
-    <button class="action" onclick="handleGenerate()">QR作成</button>
-    <button id="downloadBtn" class="action" onclick="downloadQRCode()">QRダウンロード</button>
-  </div>
-
-  <div id="qrcode"></div>
-
-  <footer id="footer-copy">
-    <p>このサービスは <a class="link" href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a> を使用しています。</p>
-    <p>本ツールで生成したQRコードの利用によって生じたいかなる損害やトラブルについても、当方は一切責任を負いません。使用は自己責任でお願いします。</p>
-  </footer>
-
+<h1>QRコードツール – QR Code Tool</h1>
+<div class="mode-selector">
+  <button class="active" data-mode="texturl">テキスト/URL</button>
+  <button data-mode="email">メール</button>
+  <button data-mode="tel">電話</button>
+</div>
+<input type="text" id="inputText" placeholder="テキストまたはURLを入力" autocomplete="off">
+<div>
+  <button class="action" onclick="handleGenerate()">QR作成</button>
+  <button id="downloadBtn" class="action" onclick="downloadQRCode()">QRダウンロード</button>
+</div>
+<div id="qrcode"></div>
+<footer id="footer-copy">
+  <p>このサービスは <a class="link" href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a> を使用しています。</p>
+  <p>本ツールで生成したQRコードの利用によって生じたいかなる損害やトラブルについても、当方は一切責任を負いません。使用は自己責任でお願いします。</p>
+</footer>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
-const modeButtons = document.querySelectorAll('.mode-selector button');
-const input = document.getElementById('inputText');
-let currentMode = 'texturl';
-
-// モード切替
-modeButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    modeButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentMode = btn.dataset.mode;
-    switch(currentMode){
-      case 'texturl': input.placeholder='テキストまたはURLを入力'; break;
-      case 'email': input.placeholder='example@gmail.com'; break;
-      case 'tel': input.placeholder='09012345678'; break;
-    }
-  });
+const modeButtons=document.querySelectorAll('.mode-selector button');
+const input=document.getElementById('inputText');
+let currentMode='texturl';
+modeButtons.forEach(btn=>{
+btn.addEventListener('click',()=>{
+modeButtons.forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+currentMode=btn.dataset.mode;
+switch(currentMode){
+case'texturl':input.placeholder='テキストまたはURLを入力';break;
+case'email':input.placeholder='example@gmail.com';break;
+case'tel':input.placeholder='09012345678';break;
+}
 });
-
-// モード別値作成
+});
 function buildValueByMode(value){
-  switch(currentMode){
-    case 'email': return value.startsWith('mailto:')?value:`mailto:${value}`;
-    case 'tel': return value.startsWith('tel:')?value:`tel:${value}`;
-    default: return value;
-  }
+switch(currentMode){
+case'email':return value.startsWith('mailto:')?value:`mailto:${value}`;
+case'tel':return value.startsWith('tel:')?value:`tel:${value}`;
+default:return value;
 }
-
-// QR作成
+}
 async function handleGenerate(auto=false){
-  const value = input.value.trim();
-  const qrDiv = document.getElementById('qrcode');
-  const downloadBtn = document.getElementById('downloadBtn');
-  qrDiv.innerHTML = '';
-  downloadBtn.style.display = 'none';
-  if(!value){ if(!auto) alert('⚠️ 入力が空です'); return; }
-  const data = buildValueByMode(value);
-  QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
-    if(err) return alert('QRコードの生成に失敗しました');
-    qrDiv.appendChild(canvas);
-    downloadBtn.style.display = 'inline-block';
-  });
+const value=input.value.trim();
+const qrDiv=document.getElementById('qrcode');
+const downloadBtn=document.getElementById('downloadBtn');
+qrDiv.innerHTML='';
+downloadBtn.style.display='none';
+if(!value){if(!auto)alert('⚠️ 入力が空です');return;}
+const data=buildValueByMode(value);
+QRCode.toCanvas(data,{width:256},(err,canvas)=>{
+if(err)return alert('QRコードの生成に失敗しました');
+qrDiv.appendChild(canvas);
+downloadBtn.style.display='inline-block';
+});
 }
-
-// QRダウンロード
 function downloadQRCode(){
-  const canvas = document.querySelector('#qrcode canvas');
-  if(!canvas) return alert('QRコードがまだ生成されていません。');
-  const now = new Date();
-  const name = `QR_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.png`;
-  const link = document.createElement('a');
-  link.download = name;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+const canvas=document.querySelector('#qrcode canvas');
+if(!canvas)return alert('QRコードがまだ生成されていません。');
+const now=new Date();
+const name=`QR_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.png`;
+const link=document.createElement('a');
+link.download=name;
+link.href=canvas.toDataURL('image/png');
+link.click();
 }
-
-// URLパラメータから自動生成
-const params = new URLSearchParams(location.search);
-for(const [key,val] of params.entries()){
-  if(['texturl','email','tel'].includes(key)){
-    currentMode = key;
-    modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode===key));
-    input.value = decodeURIComponent(val);
-    handleGenerate(true);
-    break;
-  }
+const params=new URLSearchParams(location.search);
+for(const[key,val]of params.entries()){
+if(['texturl','email','tel'].includes(key)){
+currentMode=key;
+modeButtons.forEach(b=>b.classList.toggle('active',b.dataset.mode===key));
+input.value=decodeURIComponent(val);
+handleGenerate(true);
+break;
 }
-
-// コピーライト
-(() => {
-  const baseYear = 2025;
-  const currentYear = new Date().getFullYear();
-  const footer = document.getElementById("footer-copy");
-  const hostname = location.hostname;
-  let footerHTML = '';
-  if(hostname === "hamuzon.github.io"){
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-  } else if(hostname.includes("qr.hamusata.f5.si")){
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else if(hostname.includes("qr.link-s.f5.si")){
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else {
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} QR Code Generator`;
-  }
-  footer.innerHTML = footerHTML + footer.innerHTML;
+}
+(()=>{
+const baseYear=2025;
+const currentYear=new Date().getFullYear();
+const footer=document.getElementById("footer-copy");
+const hostname=location.hostname;
+let footerHTML='';
+if(hostname==="hamuzon.github.io"){
+footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+}else if(hostname.includes("qr.hamusata.f5.si")){
+footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+}else if(hostname.includes("qr.link-s.f5.si")){
+footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+}else{
+footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
+}
+footer.innerHTML=footerHTML+footer.innerHTML;
 })();
 </script>
-
 </body>
 </html>
