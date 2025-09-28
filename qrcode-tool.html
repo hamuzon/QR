@@ -12,9 +12,7 @@
   --link-color: #4CAF50;
   --bg-gradient: linear-gradient(180deg, #fde2e2 0%, #fff1e6 30%, #d0e7f9 70%, #a8d0e6 100%);
 }
-
 * { box-sizing: border-box; }
-
 body {
   background: var(--bg-gradient);
   font-family: 'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
@@ -25,7 +23,6 @@ body {
   min-height: 100vh;
   margin: 0;
 }
-
 main.container {
   background: rgba(255,255,255,0.85);
   backdrop-filter: blur(10px);
@@ -36,17 +33,12 @@ main.container {
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   text-align: center;
 }
-
 h1 {
   font-size: 2.2rem;
   margin-bottom: 1rem;
   color: #333;
 }
-
-.mode-selector {
-  margin-bottom: 1.5rem;
-}
-
+.mode-selector { margin-bottom: 1.5rem; }
 .mode-selector button {
   background-color: var(--color-accent-light);
   border: none;
@@ -59,15 +51,8 @@ h1 {
   box-shadow: 0 3px 6px rgba(51,153,255,0.3);
   transition: background 0.3s;
 }
-
-.mode-selector button.active {
-  background-color: var(--color-accent);
-}
-
-.mode-selector button:hover {
-  background-color: var(--color-accent);
-}
-
+.mode-selector button.active { background-color: var(--color-accent); }
+.mode-selector button:hover { background-color: var(--color-accent); }
 input[type="text"] {
   width: 90%;
   padding: 0.8rem;
@@ -79,12 +64,7 @@ input[type="text"] {
   margin-bottom: 1.5rem;
   transition: background-color 0.3s, border-color 0.3s;
 }
-
-input:focus {
-  background-color: #f0f8ff;
-  border-color: #1673e6;
-}
-
+input:focus { background-color: #f0f8ff; border-color: #1673e6; }
 button.action {
   padding: 0.85rem;
   font-size: 1.15rem;
@@ -100,19 +80,9 @@ button.action {
   user-select: none;
   transition: background-color 0.3s ease;
 }
-
-button.action:hover {
-  background-color: #1673e6;
-}
-
-#qrcode {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
+button.action:hover { background-color: #1673e6; }
+#qrcode { margin-top: 2rem; display: flex; justify-content: center; }
 #downloadBtn { display: none; }
-
 footer {
   margin-top: 2.5rem;
   font-size: 0.85rem;
@@ -120,10 +90,8 @@ footer {
   user-select: none;
   line-height: 1.5;
 }
-
 a.link { color: var(--link-color); text-decoration: none; }
 a.link:hover { text-decoration: underline; }
-
 @media(max-width:480px){
   button.action { width: 100%; }
   input[type="text"] { width: 100%; }
@@ -170,7 +138,6 @@ modeButtons.forEach(btn => {
     modeButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentMode = btn.dataset.mode;
-
     switch(currentMode){
       case 'texturl': input.placeholder='テキストまたはURLを入力'; break;
       case 'email': input.placeholder='example@gmail.com'; break;
@@ -195,9 +162,7 @@ async function handleGenerate(auto=false){
   const downloadBtn = document.getElementById('downloadBtn');
   qrDiv.innerHTML = '';
   downloadBtn.style.display = 'none';
-
   if(!value){ if(!auto) alert('⚠️ 入力が空です'); return; }
-
   const data = buildValueByMode(value);
   QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
     if(err) return alert('QRコードの生成に失敗しました');
@@ -235,8 +200,18 @@ for(const [key,val] of params.entries()){
   const baseYear = 2025;
   const currentYear = new Date().getFullYear();
   const footer = document.getElementById("footer-copy");
-  let copyHTML = `&copy; ${baseYear}${currentYear>baseYear?'–'+currentYear:''} QRコードツール / QR Code Tool`;
-  footer.insertAdjacentHTML('afterbegin', `<div>${copyHTML}</div>`);
+  const hostname = location.hostname;
+  let footerHTML = '';
+  if(hostname === "hamuzon.github.io"){
+    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  } else if(hostname.includes("qr.hamusata.f5.si")){
+    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  } else if(hostname.includes("qr.link-s.f5.si")){
+    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} <a href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  } else {
+    footerHTML = `&copy; ${baseYear}${currentYear>baseYear? "–"+currentYear:""} QR Code Generator`;
+  }
+  footer.innerHTML = footerHTML + footer.innerHTML;
 })();
 </script>
 
