@@ -88,9 +88,12 @@ footer {
   line-height: 1.5;
   user-select: none;
   color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-a.link { color: var(--link-color); text-decoration: none; }
-a.link:hover { text-decoration: underline; }
+footer a { color: var(--link-color); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 @media(max-width:480px){
   button.action { width: 100%; }
   input[type="text"] { width: 100%; }
@@ -185,7 +188,7 @@ footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a hr
 }else if(hostname.includes("qr.hamusata.f5.si")){
 footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else if(hostname.includes("qr.link-s.f5.si")){
-footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else{
 footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
 }
