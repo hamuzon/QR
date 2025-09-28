@@ -9,10 +9,13 @@
 :root {
   --color-accent: #3399ff;
   --color-accent-light: #7fbfff;
-  --link-color: #4CAF50;
   --bg-gradient: linear-gradient(180deg, #fde2e2 0%, #fff1e6 30%, #d0e7f9 70%, #a8d0e6 100%);
 }
-* { box-sizing: border-box; }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: var(--bg-gradient);
   font-family: 'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
@@ -22,7 +25,9 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
+  color: #333; /* 全体文字色 */
 }
+
 main.container {
   background: rgba(255,255,255,0.85);
   backdrop-filter: blur(10px);
@@ -33,12 +38,16 @@ main.container {
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   text-align: center;
 }
+
 h1 {
   font-size: 2.2rem;
   margin-bottom: 1rem;
-  color: #333;
 }
-.mode-selector { margin-bottom: 1.5rem; }
+
+.mode-selector {
+  margin-bottom: 1.5rem;
+}
+
 .mode-selector button {
   background-color: var(--color-accent-light);
   border: none;
@@ -51,8 +60,15 @@ h1 {
   box-shadow: 0 3px 6px rgba(51,153,255,0.3);
   transition: background 0.3s;
 }
-.mode-selector button.active { background-color: var(--color-accent); }
-.mode-selector button:hover { background-color: var(--color-accent); }
+
+.mode-selector button.active {
+  background-color: var(--color-accent);
+}
+
+.mode-selector button:hover {
+  background-color: var(--color-accent);
+}
+
 input[type="text"] {
   width: 90%;
   padding: 0.8rem;
@@ -64,7 +80,12 @@ input[type="text"] {
   margin-bottom: 1.5rem;
   transition: background-color 0.3s, border-color 0.3s;
 }
-input:focus { background-color: #f0f8ff; border-color: #1673e6; }
+
+input:focus {
+  background-color: #f0f8ff;
+  border-color: #1673e6;
+}
+
 button.action {
   padding: 0.85rem;
   font-size: 1.15rem;
@@ -80,21 +101,45 @@ button.action {
   user-select: none;
   transition: background-color 0.3s ease;
 }
-button.action:hover { background-color: #1673e6; }
-#qrcode { margin-top: 2rem; display: flex; justify-content: center; }
-#downloadBtn { display: none; }
+
+button.action:hover {
+  background-color: #1673e6;
+}
+
+#qrcode {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+#downloadBtn {
+  display: none;
+}
+
 footer {
   margin-top: 2.5rem;
   font-size: 0.85rem;
-  color: #666;
-  user-select: none;
   line-height: 1.5;
+  user-select: none;
+  color: inherit; /* 文字色継承 */
 }
-a.link { color: var(--link-color); text-decoration: none; }
-a.link:hover { text-decoration: underline; }
+
+a.link {
+  color: inherit; /* 親要素の文字色を継承 */
+  text-decoration: none;
+}
+
+a.link:hover {
+  text-decoration: underline;
+}
+
 @media(max-width:480px){
-  button.action { width: 100%; }
-  input[type="text"] { width: 100%; }
+  button.action {
+    width: 100%;
+  }
+  input[type="text"] {
+    width: 100%;
+  }
 }
 </style>
 </head>
