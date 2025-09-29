@@ -52,18 +52,20 @@ h1 { font-size: 2.2rem; margin-bottom: 1rem; }
 }
 .mode-selector button.active { background-color: var(--color-accent); }
 .mode-selector button:hover { background-color: var(--color-accent); }
-input[type="text"] {
-  width: 90%;
+
+input[type="text"], input[type="password"], select {
+  width: 100%;
   padding: 0.8rem;
   font-size: 1.1rem;
   border: 1.5px solid var(--color-accent);
   border-radius: 14px;
   box-shadow: 0 6px 12px rgba(51,153,255,0.15);
   outline: none;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   transition: background-color 0.3s, border-color 0.3s;
 }
-input:focus { background-color: #f0f8ff; border-color: #1673e6; }
+input:focus, select:focus { background-color: #f0f8ff; border-color: #1673e6; }
+
 button.action {
   padding: 0.85rem;
   font-size: 1.15rem;
@@ -80,8 +82,18 @@ button.action {
   transition: background-color 0.3s ease;
 }
 button.action:hover { background-color: #1673e6; }
+
+#wifiInputs { display: none; flex-direction: column; gap: 0.5rem; align-items: center; }
+#wifiInputs .wifi-password-wrapper {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+#wifiInputs p { font-size:0.75rem; color:#b00; margin-top:0.3rem; text-align:left; }
+
 #qrcode { margin-top: 2rem; display: flex; justify-content: center; }
 #downloadBtn { display: none; }
+
 footer {
   margin-top: 2.5rem;
   font-size: 0.85rem;
@@ -94,105 +106,196 @@ footer {
 }
 footer a { color: var(--link-color); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
+
 @media(max-width:480px){
   button.action { width: 100%; }
-  input[type="text"] { width: 100%; }
+  input[type="text"], input[type="password"], select { width: 100%; }
+  #wifiInputs .wifi-password-wrapper { flex-direction: column; }
+  #wifiInputs .wifi-password-wrapper button { width: 100%; }
 }
 </style>
 </head>
 <body>
 <main class="container">
 <h1>QRコードツール – QR Code Tool</h1>
+
 <div class="mode-selector">
   <button class="active" data-mode="texturl">テキスト/URL</button>
   <button data-mode="email">メール</button>
   <button data-mode="tel">電話</button>
+  <button data-mode="wifi">Wi-Fi</button>
 </div>
+
 <input type="text" id="inputText" placeholder="テキストまたはURLを入力" autocomplete="off">
+
+<div id="wifiInputs">
+  <input type="text" id="wifiSSID" placeholder="SSID">
+  <div class="wifi-password-wrapper">
+    <input type="password" id="wifiPassword" placeholder="パスワード">
+    <button type="button" id="togglePassword" style="
+      padding:0.3rem 0.5rem;
+      font-size:0.85rem;
+      border:none;
+      border-radius:6px;
+      background:var(--color-accent-light);
+      color:#fff;
+      cursor:pointer;
+      flex-shrink:0;
+    ">表示</button>
+  </div>
+  <select id="wifiEncrypt">
+    <option value="WPA" selected>WPA/WPA2</option>
+    <option value="WEP">WEP</option>
+    <option value="nopass">なし</option>
+  </select>
+  <p>⚠️ このWi-Fi QRコード生成機能は自己責任で使用してください。接続トラブルやセキュリティ上の問題が発生しても当方は一切責任を負いません。</p>
+</div>
+
 <div>
   <button class="action" onclick="handleGenerate()">QR作成</button>
   <button id="downloadBtn" class="action" onclick="downloadQRCode()">QRダウンロード</button>
 </div>
+
 <div id="qrcode"></div>
+
 <footer id="footer-copy">
   <p>このサービスは <a class="link" href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a> を使用しています。</p>
   <p>本ツールで生成したQRコードの利用によって生じたいかなる損害やトラブルについても、当方は一切責任を負いません。使用は自己責任でお願いします。</p>
 </footer>
 </main>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script>
 const modeButtons=document.querySelectorAll('.mode-selector button');
 const input=document.getElementById('inputText');
+const wifiInputs=document.getElementById('wifiInputs');
+const togglePasswordBtn = document.getElementById('togglePassword');
+const wifiPasswordInput = document.getElementById('wifiPassword');
 let currentMode='texturl';
+
 modeButtons.forEach(btn=>{
-btn.addEventListener('click',()=>{
-modeButtons.forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-currentMode=btn.dataset.mode;
-switch(currentMode){
-case'texturl':input.placeholder='テキストまたはURLを入力';break;
-case'email':input.placeholder='example@gmail.com';break;
-case'tel':input.placeholder='09012345678';break;
-}
+  btn.addEventListener('click',()=>{
+    modeButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode=btn.dataset.mode;
+
+    switch(currentMode){
+      case 'texturl':
+        input.placeholder='テキストまたはURLを入力';
+        input.style.display='block';
+        wifiInputs.style.display='none';
+        break;
+      case 'email':
+        input.placeholder='example@gmail.com';
+        input.style.display='block';
+        wifiInputs.style.display='none';
+        break;
+      case 'tel':
+        input.placeholder='09012345678';
+        input.style.display='block';
+        wifiInputs.style.display='none';
+        break;
+      case 'wifi':
+        input.style.display='none';
+        wifiInputs.style.display='flex';
+        break;
+    }
+  });
 });
+
+togglePasswordBtn.addEventListener('click', ()=>{
+  if(wifiPasswordInput.type === 'password'){
+    wifiPasswordInput.type = 'text';
+    togglePasswordBtn.textContent = '非表示';
+  } else {
+    wifiPasswordInput.type = 'password';
+    togglePasswordBtn.textContent = '表示';
+  }
 });
+
 function buildValueByMode(value){
-switch(currentMode){
-case'email':return value.startsWith('mailto:')?value:`mailto:${value}`;
-case'tel':return value.startsWith('tel:')?value:`tel:${value}`;
-default:return value;
+  switch(currentMode){
+    case 'email': return value.startsWith('mailto:')?value:`mailto:${value}`;
+    case 'tel': return value.startsWith('tel:')?value:`tel:${value}`;
+    case 'wifi':
+      const ssid = document.getElementById('wifiSSID').value.trim();
+      const pass = document.getElementById('wifiPassword').value.trim();
+      const enc = document.getElementById('wifiEncrypt').value;
+      if(!ssid){ alert('SSIDを入力してください'); return ''; }
+      return `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+    default: return value;
+  }
 }
-}
+
 async function handleGenerate(auto=false){
-const value=input.value.trim();
-const qrDiv=document.getElementById('qrcode');
-const downloadBtn=document.getElementById('downloadBtn');
-qrDiv.innerHTML='';
-downloadBtn.style.display='none';
-if(!value){if(!auto)alert('⚠️ 入力が空です');return;}
-const data=buildValueByMode(value);
-QRCode.toCanvas(data,{width:256},(err,canvas)=>{
-if(err)return alert('QRコードの生成に失敗しました');
-qrDiv.appendChild(canvas);
-downloadBtn.style.display='inline-block';
-});
+  const value=input.value.trim();
+  const qrDiv=document.getElementById('qrcode');
+  const downloadBtn=document.getElementById('downloadBtn');
+  qrDiv.innerHTML='';
+  downloadBtn.style.display='none';
+
+  const data = (currentMode === 'wifi') ? buildValueByMode() : buildValueByMode(value);
+
+  if(!data){ if(!auto) alert('⚠️ 入力が空です'); return; }
+
+  QRCode.toCanvas(data,{width:256},(err,canvas)=>{
+    if(err) return alert('QRコードの生成に失敗しました');
+    qrDiv.appendChild(canvas);
+    downloadBtn.style.display='inline-block';
+  });
 }
+
 function downloadQRCode(){
-const canvas=document.querySelector('#qrcode canvas');
-if(!canvas)return alert('QRコードがまだ生成されていません。');
-const now=new Date();
-const name=`QR_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.png`;
-const link=document.createElement('a');
-link.download=name;
-link.href=canvas.toDataURL('image/png');
-link.click();
+  const canvas=document.querySelector('#qrcode canvas');
+  if(!canvas) return alert('QRコードがまだ生成されていません。');
+  const now=new Date();
+  const name=`QR_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.png`;
+  const link=document.createElement('a');
+  link.download=name;
+  link.href=canvas.toDataURL('image/png');
+  link.click();
 }
+
+// URLパラメータ対応
 const params=new URLSearchParams(location.search);
 for(const[key,val]of params.entries()){
-if(['texturl','email','tel'].includes(key)){
-currentMode=key;
-modeButtons.forEach(b=>b.classList.toggle('active',b.dataset.mode===key));
-input.value=decodeURIComponent(val);
-handleGenerate(true);
-break;
+  if(['texturl','email','tel','wifi'].includes(key)){
+    currentMode=key;
+    modeButtons.forEach(b=>b.classList.toggle('active',b.dataset.mode===key));
+    if(key==='wifi'){
+      input.style.display='none';
+      wifiInputs.style.display='flex';
+      const wifiParams = JSON.parse(decodeURIComponent(val));
+      document.getElementById('wifiSSID').value = wifiParams.ssid||'';
+      document.getElementById('wifiPassword').value = wifiParams.password||'';
+      document.getElementById('wifiEncrypt').value = wifiParams.encrypt||'WPA';
+    } else {
+      input.value=decodeURIComponent(val);
+      wifiInputs.style.display='none';
+      input.style.display='block';
+    }
+    handleGenerate(true);
+    break;
+  }
 }
-}
+
+// フッター処理
 (()=>{
-const baseYear=2025;
-const currentYear=new Date().getFullYear();
-const footer=document.getElementById("footer-copy");
-const hostname=location.hostname;
-let footerHTML='';
-if(hostname==="hamuzon.github.io"){
-footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-}else if(hostname.includes("qr.hamusata.f5.si")){
-footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-}else if(hostname.includes("qr.link-s.f5.si")){
-footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-}else{
-footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
-}
-footer.innerHTML=footerHTML+footer.innerHTML;
+  const baseYear=2025;
+  const currentYear=new Date().getFullYear();
+  const footer=document.getElementById("footer-copy");
+  const hostname=location.hostname;
+  let footerHTML='';
+  if(hostname==="hamuzon.github.io"){
+    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  }else if(hostname.includes("qr.hamusata.f5.si")){
+    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  }else if(hostname.includes("qr.link-s.f5.si")){
+    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  }else{
+    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
+  }
+  footer.innerHTML=footerHTML+footer.innerHTML;
 })();
 </script>
 </body>
