@@ -92,7 +92,7 @@ button.action:hover { background-color: #1673e6; }
 #wifiInputs p { font-size:0.75rem; color:#b00; margin-top:0.3rem; text-align:left; }
 
 #qrcode { margin-top: 2rem; display: flex; justify-content: center; }
-#downloadBtn { display: none; }
+#downloadBtn, #shareBtn { display: none; }
 
 footer {
   margin-top: 2.5rem;
@@ -154,6 +154,7 @@ footer a:hover { text-decoration: underline; }
 <div>
   <button class="action" onclick="handleGenerate()">QR作成</button>
   <button id="downloadBtn" class="action" onclick="downloadQRCode()">QRダウンロード</button>
+  <button id="shareBtn" class="action">URLをコピー / 共有</button>
 </div>
 
 <div id="qrcode"></div>
@@ -171,6 +172,7 @@ const input=document.getElementById('inputText');
 const wifiInputs=document.getElementById('wifiInputs');
 const togglePasswordBtn = document.getElementById('togglePassword');
 const wifiPasswordInput = document.getElementById('wifiPassword');
+const shareBtn = document.getElementById('shareBtn');
 let currentMode='texturl';
 
 modeButtons.forEach(btn=>{
@@ -231,8 +233,10 @@ async function handleGenerate(auto=false){
   const value=input.value.trim();
   const qrDiv=document.getElementById('qrcode');
   const downloadBtn=document.getElementById('downloadBtn');
+  const shareBtnEl = document.getElementById('shareBtn');
   qrDiv.innerHTML='';
   downloadBtn.style.display='none';
+  shareBtnEl.style.display='none';
 
   const data = (currentMode === 'wifi') ? buildValueByMode() : buildValueByMode(value);
 
@@ -242,6 +246,7 @@ async function handleGenerate(auto=false){
     if(err) return alert('QRコードの生成に失敗しました');
     qrDiv.appendChild(canvas);
     downloadBtn.style.display='inline-block';
+    shareBtnEl.style.display='inline-block';
   });
 }
 
@@ -255,6 +260,40 @@ function downloadQRCode(){
   link.href=canvas.toDataURL('image/png');
   link.click();
 }
+
+// URL共有ボタン
+shareBtn.addEventListener('click', () => {
+  let shareURL = location.origin + location.pathname;
+  let param = '';
+
+  switch(currentMode){
+    case 'texturl':
+      if(input.value.trim()) param = `?texturl=${encodeURIComponent(input.value.trim())}`;
+      break;
+    case 'email':
+      if(input.value.trim()) param = `?email=${encodeURIComponent(input.value.trim())}`;
+      break;
+    case 'tel':
+      if(input.value.trim()) param = `?tel=${encodeURIComponent(input.value.trim())}`;
+      break;
+    case 'wifi':
+      const wifiData = {
+        ssid: document.getElementById('wifiSSID').value.trim(),
+        password: document.getElementById('wifiPassword').value.trim(),
+        encrypt: document.getElementById('wifiEncrypt').value
+      };
+      param = `?wifi=${encodeURIComponent(JSON.stringify(wifiData))}`;
+      break;
+  }
+
+  shareURL += param;
+
+  navigator.clipboard.writeText(shareURL).then(() => {
+    alert('URLがコピーされました:\n' + shareURL);
+  }).catch(() => {
+    alert('クリップボードにコピーできませんでした。手動でコピーしてください:\n' + shareURL);
+  });
+});
 
 // URLパラメータ対応
 const params=new URLSearchParams(location.search);
@@ -291,7 +330,7 @@ for(const[key,val]of params.entries()){
   }else if(hostname.includes("qr.hamusata.f5.si")){
     footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
   }else if(hostname.includes("qr.link-s.f5.si")){
-    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamuzata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+    footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a href="https://hamusata.f5.si/" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
   }else{
     footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
   }
