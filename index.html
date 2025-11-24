@@ -30,12 +30,19 @@ body {
   background: transparent;
 }
 
-.container {
+/* カード全体を囲む枠 */
+.wrapper {
   width: 100%;
-  max-width: 960px;
-  margin: 2rem 0;
-  padding: 2rem 2.5rem;
+  max-width: 980px;
+  margin: 2rem auto;
+  padding: 2rem;
   border-radius: 1rem;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+/* グリッド部分 */
+.container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
@@ -51,9 +58,9 @@ h1 {
 .desc {
   grid-column: 1/-1;
   text-align: center;
+  color: #555;
   font-size: 1rem;
   line-height: 1.6;
-  color: #555;
   margin-bottom: 2rem;
 }
 
@@ -96,8 +103,8 @@ h1 {
 .btn-desc {
   margin-top: 0.75rem;
   font-size: 0.85rem;
-  line-height: 1.5;
   color: #444;
+  line-height: 1.5;
   text-align: center;
 }
 
@@ -119,11 +126,9 @@ a.link:hover {
 }
 
 @media (max-width: 600px) {
-  .container {
+  .wrapper {
     padding: 1.5rem 1rem;
-    gap: 1rem;
   }
-
   .btn-wrapper {
     padding: 1rem;
   }
@@ -132,63 +137,41 @@ a.link:hover {
 </head>
 <body>
 
-<div class="container">
-  <h1>QR機能選択 / QR Function Selection</h1>
-  <p class="desc">使いたい機能を選択してください。<br />Please select the feature you want to use.</p>
+<!-- カード全体ラッパー -->
+<div class="wrapper">
+  <div class="container">
+    <h1>QR機能選択 / QR Function Selection</h1>
+    <p class="desc">使いたい機能を選択してください。<br />Please select the feature you want to use.</p>
 
-  <div class="btn-wrapper">
-    <a href="short-url-qr.html" class="btn" target="_self">
-      短縮URL & QRコード生成 / Short URL & QR Code Generator
-    </a>
-    <p class="btn-desc">
-      URLを入力すると短縮URLを発行し、QRコードを生成します。<br />
-      Enter a URL to generate a shortened URL and create a QR code.
-    </p>
-  </div>
+    <div class="btn-wrapper">
+      <a href="short-url-qr.html" class="btn" target="_self">短縮URL & QRコード生成 / Short URL & QR Code Generator</a>
+      <p class="btn-desc">URLを入力すると短縮URLを発行し、QRコードを生成します。<br />Enter a URL to generate a shortened URL and create a QR code.</p>
+    </div>
 
-  <div class="btn-wrapper">
-    <a href="QR.html" class="btn" target="_self">
-      QRコード生成のみ / QR Code Generator Only
-    </a>
-    <p class="btn-desc">
-      URL短縮機能はなく、入力したテキストやURLをそのままQRコードにします。<br />
-      Generates QR codes without URL shortening; uses the entered text or URL as is.
-    </p>
-  </div>
+    <div class="btn-wrapper">
+      <a href="QR.html" class="btn" target="_self">QRコード生成のみ / QR Code Generator Only</a>
+      <p class="btn-desc">URL短縮機能はなく、入力したテキストやURLをそのままQRコードにします。<br />Generates QR codes without URL shortening; uses the entered text or URL as is.</p>
+    </div>
 
-  <div class="btn-wrapper">
-    <a href="qrcode-tool.html" class="btn" target="_self">
-      QRコード ツール (メール,電話等機能ありQR)
-    </a>
-    <p class="btn-desc">
-      メールアドレスや電話番号など、様々な情報をQRコードに変換できます。<br />
-      Generates QR codes from email, phone, and other information.
-    </p>
-  </div>
+    <div class="btn-wrapper">
+      <a href="qrcode-tool.html" class="btn" target="_self">QRコード ツール (メール,電話等機能ありQR)</a>
+      <p class="btn-desc">メールアドレスや電話番号など、様々な情報をQRコードに変換できます。<br />Generates QR codes from email, phone, and other information.</p>
+    </div>
 
-  <div class="btn-wrapper">
-    <a href="mc-qr.html" class="btn" target="_self">
-      マイクラ等ドットQR (永遠β) / Minecraft-style Dot QR (Beta)
-    </a>
-    <p class="btn-desc">
-      ドット絵風にQRコードを生成できます。永遠β版です。<br />
-      Creates QR codes in pixel art style. Beta version.
-    </p>
-  </div>
+    <div class="btn-wrapper">
+      <a href="scan.html" class="btn" target="_self">QR読み取りツール / QR Scanner</a>
+      <p class="btn-desc">カメラまたはファイルからQRコードをスキャンして内容を読み取ります。<br />Scan QR codes using your camera or from a file and read the content.</p>
+    </div>
 
-  <div class="btn-wrapper">
-    <a href="scan.html" class="btn" target="_self">
-      QR読み取りツール / QR Scanner
-    </a>
-    <p class="btn-desc">
-      カメラまたはファイルからQRコードをスキャンして内容を読み取ります。<br />
-      Scan QR codes using your camera or from a file and read the content.
-    </p>
+    <div class="btn-wrapper">
+      <a href="mc-qr.html" class="btn" target="_self">マイクラ等ドットQR (永遠β) / Minecraft-style Dot QR (Beta)</a>
+      <p class="btn-desc">ドット絵風にQRコードを生成できます。永遠β版です。<br />Creates QR codes in pixel art style. Beta version.</p>
+    </div>
+
   </div>
 </div>
 
 <footer id="footer-copy"></footer>
-
 <script>
 const baseYear = 2025;
 const currentYear = new Date().getFullYear();
