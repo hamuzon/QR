@@ -6,11 +6,7 @@
 <title>QR Function Selection</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
 html {
   height: 100%;
@@ -31,12 +27,10 @@ body {
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.95);
   width: 100%;
   max-width: 960px;
   margin: 2rem 0;
   border-radius: 1rem;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.1);
   padding: 2rem 2.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -66,13 +60,13 @@ h1 {
   background: #fff;
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .btn-wrapper:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 .btn {
@@ -165,21 +159,21 @@ a.link:hover {
 
 <footer id="footer-copy"></footer>
 <script>
-const baseYear = 2025;
-const currentYear = new Date().getFullYear();
-const hostname = location.hostname;
-const footer = document.getElementById("footer-copy");
-let footerHTML = "";
+const baseYear=2025;
+const currentYear=new Date().getFullYear();
+const hostname=location.hostname;
+const footer=document.getElementById("footer-copy");
+let footerHTML="";
 if(hostname==="hamuzon.github.io"){
-  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
 }else if(hostname.includes("qr.hamusata.f5.si")){
-  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else if(hostname.includes("qr.link-s.f5.si")){
-  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else{
-  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
+  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
 }
-footer.innerHTML = footerHTML;
+footer.innerHTML=footerHTML;
 </script>
 </body>
 </html>
