@@ -6,7 +6,11 @@
 <title>QR Function Selection</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 html {
   height: 100%;
@@ -30,8 +34,8 @@ body {
   width: 100%;
   max-width: 960px;
   margin: 2rem 0;
-  border-radius: 1rem;
   padding: 2rem 2.5rem;
+  border-radius: 1rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
@@ -47,9 +51,9 @@ h1 {
 .desc {
   grid-column: 1/-1;
   text-align: center;
-  color: #555;
   font-size: 1rem;
   line-height: 1.6;
+  color: #555;
   margin-bottom: 2rem;
 }
 
@@ -60,13 +64,13 @@ h1 {
   background: #fff;
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .btn-wrapper:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .btn {
@@ -92,8 +96,8 @@ h1 {
 .btn-desc {
   margin-top: 0.75rem;
   font-size: 0.85rem;
-  color: #444;
   line-height: 1.5;
+  color: #444;
   text-align: center;
 }
 
@@ -127,53 +131,81 @@ a.link:hover {
 </style>
 </head>
 <body>
+
 <div class="container">
   <h1>QR機能選択 / QR Function Selection</h1>
   <p class="desc">使いたい機能を選択してください。<br />Please select the feature you want to use.</p>
 
   <div class="btn-wrapper">
-    <a href="short-url-qr.html" class="btn" target="_self">短縮URL & QRコード生成 / Short URL & QR Code Generator</a>
-    <p class="btn-desc">URLを入力すると短縮URLを発行し、QRコードを生成します。<br />Enter a URL to generate a shortened URL and create a QR code.</p>
+    <a href="short-url-qr.html" class="btn" target="_self">
+      短縮URL & QRコード生成 / Short URL & QR Code Generator
+    </a>
+    <p class="btn-desc">
+      URLを入力すると短縮URLを発行し、QRコードを生成します。<br />
+      Enter a URL to generate a shortened URL and create a QR code.
+    </p>
   </div>
 
   <div class="btn-wrapper">
-    <a href="QR.html" class="btn" target="_self">QRコード生成のみ / QR Code Generator Only</a>
-    <p class="btn-desc">URL短縮機能はなく、入力したテキストやURLをそのままQRコードにします。<br />Generates QR codes without URL shortening; uses the entered text or URL as is.</p>
+    <a href="QR.html" class="btn" target="_self">
+      QRコード生成のみ / QR Code Generator Only
+    </a>
+    <p class="btn-desc">
+      URL短縮機能はなく、入力したテキストやURLをそのままQRコードにします。<br />
+      Generates QR codes without URL shortening; uses the entered text or URL as is.
+    </p>
   </div>
 
   <div class="btn-wrapper">
-    <a href="qrcode-tool.html" class="btn" target="_self">QRコード ツール (メール,電話等機能ありQR)</a>
-    <p class="btn-desc">メールアドレスや電話番号など、様々な情報をQRコードに変換できます。<br />Generates QR codes from email, phone, and other information.</p>
+    <a href="qrcode-tool.html" class="btn" target="_self">
+      QRコード ツール (メール,電話等機能ありQR)
+    </a>
+    <p class="btn-desc">
+      メールアドレスや電話番号など、様々な情報をQRコードに変換できます。<br />
+      Generates QR codes from email, phone, and other information.
+    </p>
   </div>
 
   <div class="btn-wrapper">
-    <a href="scan.html" class="btn" target="_self">QR読み取りツール / QR Scanner</a>
-    <p class="btn-desc">カメラまたはファイルからQRコードをスキャンして内容を読み取ります。<br />Scan QR codes using your camera or from a file and read the content.</p>
+    <a href="mc-qr.html" class="btn" target="_self">
+      マイクラ等ドットQR (永遠β) / Minecraft-style Dot QR (Beta)
+    </a>
+    <p class="btn-desc">
+      ドット絵風にQRコードを生成できます。永遠β版です。<br />
+      Creates QR codes in pixel art style. Beta version.
+    </p>
   </div>
 
   <div class="btn-wrapper">
-    <a href="mc-qr.html" class="btn" target="_self">マイクラ等ドットQR (永遠β) / Minecraft-style Dot QR (Beta)</a>
-    <p class="btn-desc">ドット絵風にQRコードを生成できます。永遠β版です。<br />Creates QR codes in pixel art style. Beta version.</p>
+    <a href="scan.html" class="btn" target="_self">
+      QR読み取りツール / QR Scanner
+    </a>
+    <p class="btn-desc">
+      カメラまたはファイルからQRコードをスキャンして内容を読み取ります。<br />
+      Scan QR codes using your camera or from a file and read the content.
+    </p>
   </div>
 </div>
 
 <footer id="footer-copy"></footer>
+
 <script>
-const baseYear=2025;
-const currentYear=new Date().getFullYear();
-const hostname=location.hostname;
-const footer=document.getElementById("footer-copy");
-let footerHTML="";
+const baseYear = 2025;
+const currentYear = new Date().getFullYear();
+const hostname = location.hostname;
+const footer = document.getElementById("footer-copy");
+let footerHTML = "";
 if(hostname==="hamuzon.github.io"){
-  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
 }else if(hostname.includes("qr.hamusata.f5.si")){
-  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else if(hostname.includes("qr.link-s.f5.si")){
-  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
 }else{
-  footerHTML=`&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
+  footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
 }
-footer.innerHTML=footerHTML;
+footer.innerHTML = footerHTML;
 </script>
+
 </body>
 </html>
