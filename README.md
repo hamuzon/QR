@@ -27,4 +27,8 @@ Please see the [LICENSE](./LICENSE) file for details.
 - **QRCode.js**  
   - URL: [https://davidshimjs.github.io/qrcodejs/](https://davidshimjs.github.io/qrcodejs/)  
 
-追加されてないのあるかも
+- **html5-qrcode**  
+  - URL: [https://github.com/mebjas/html5-qrcode](https://github.com/mebjas/html5-qrcode)  
+
+- **jsQR**  
+  - URL: [https://github.com/cozmo/jsQR](https://github.com/cozmo/jsQR)
