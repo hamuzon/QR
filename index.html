@@ -230,20 +230,22 @@
     const currentYear = new Date().getFullYear();
     const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
     const hostname = location.hostname;
+    let footerHTML = "";
 
-    let linkHTML;
     if (hostname === "hamuzon.github.io") {
-      linkHTML = `<a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-    } else if (hostname.includes("hamusata.f5.si")) {
-      linkHTML = `<a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
     } else if (hostname.includes("hamuzon-jp.f5.si")) {
-      linkHTML = `<a class="link" href="https://hamuzon-jp.f5.si" target="_blank">@hamuzon</a>`;
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+    } else if (hostname.includes("hamusata.f5.si")) {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
     } else if (hostname.includes("qr.link-s.f5.si")) {
-      linkHTML = `<a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+    } else if (hostname.includes("hamusata.f5.si")) {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
     } else {
-      linkHTML = `QR Code Generator`;
+      footerHTML = `&copy; ${yearString} QR Tools Hub`;
     }
-    footer.innerHTML = `&copy; ${yearString} ${linkHTML}`;
+    footer.innerHTML = footerHTML;
   </script>
 
 </body>

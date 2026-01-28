@@ -32,3 +32,4 @@ Please see the [LICENSE](./LICENSE) file for details.
 
 - **jsQR**  
   - URL: [https://github.com/cozmo/jsQR](https://github.com/cozmo/jsQR)
+  

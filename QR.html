@@ -10,7 +10,7 @@
       --color-accent: #3399ff;
       --color-accent-light: #7fbfff;
       --color-error: #d33;
-      --link-color: #4CAF50; /* 春らしい新芽カラー */
+      --link-color: #4CAF50; 
       --bg-gradient: linear-gradient(
         180deg,
         #f9e6e7 0%,
@@ -136,26 +136,31 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
     (() => {
+      const footer = document.getElementById("footer-copy");
+      if (!footer) {
+        return;
+      }
+
       const baseYear = 2025;
       const currentYear = new Date().getFullYear();
       const hostname = location.hostname;
-      const footer = document.getElementById("footer-copy");
-
-      let copyHTML = "";
+      const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+      let footerHTML = "";
 
       if (hostname === "hamuzon.github.io") {
-        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-      } else if (hostname.includes("qr.hamusata.f5.si")) {
-        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} <a class="link" href="https://home.hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamuzon-jp.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else if (hostname.includes("qr.link-s.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else if (hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
       } else {
-        copyHTML = `&copy; ${baseYear}${currentYear > baseYear ? "–" + currentYear : ""} QR Code Generator`;
+        footerHTML = `&copy; ${yearString} QR Code Generator`;
       }
-
-      if (footer) {
-        footer.insertAdjacentHTML("afterbegin", `<div>${copyHTML}</div>`);
-      } else {
-        console.warn("footer element with id 'footer-copy' not found.");
-      }
+      footer.insertAdjacentHTML("afterbegin", `<div>${footerHTML}</div>`);
     })();
 
     async function handleGenerate() {

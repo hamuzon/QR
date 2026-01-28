@@ -140,22 +140,17 @@
 <main class="container">
   <h1>QR Code Scanner</h1>
 
-  <!-- カメラON/OFF -->
   <button id="cameraToggleBtn">カメラON</button>
 
-  <!-- カメラ選択 -->
   <select id="cameraSelect">
     <option value="">カメラ読み込み中...</option>
   </select>
 
-  <!-- カメラ表示 -->
   <div id="reader"></div>
 
-  <!-- ファイル入力 -->
   <p style="margin-top:1.5rem;">カメラで読み取れない場合は画像をアップロード:</p>
   <input type="file" id="fileInput" accept="image/*">
 
-  <!-- 結果とリセット -->
   <div id="resultBox">
     <span id="scanResult"></span><br>
     <button id="resetBtn">リセット</button>
@@ -167,30 +162,34 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 <script>
-  /* フッター生成 */
   const baseYear = 2025;
   const currentYear = new Date().getFullYear();
   const hostname = location.hostname;
   const footer = document.getElementById("footer-copy");
-
+  const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
   let footerHTML = "";
-  if(hostname === "hamuzon.github.io") {
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-  } else if(hostname.includes("qr.hamusata.f5.si") || hostname.includes("qr.link-s.f5.si")) {
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+
+  if (hostname === "hamuzon.github.io") {
+    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  } else if (hostname.includes("hamuzon-jp.f5.si")) {
+    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+  } else if (hostname.includes("hamusata.f5.si")) {
+    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  } else if (hostname.includes("qr.link-s.f5.si")) {
+    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+  } else if (hostname.includes("hamusata.f5.si")) {
+    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
   } else {
-    footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Scanner`;
+    footerHTML = `&copy; ${yearString} QR Code Scanner`;
   }
 
   footerHTML += `<p>このサービスは 
-    <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank">html5-qrcode</a> と 
-    <a class="link" href="https://unpkg.com/jsqr/dist/jsQR.js" target="_blank">jsQR</a> ライブラリを使用しています。</p>`;
+    <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank" rel="noopener noreferrer">html5-qrcode</a> と 
+    <a class="link" href="https://unpkg.com/jsqr/dist/jsQR.js" target="_blank" rel="noopener noreferrer">jsQR</a> ライブラリを使用しています。</p>`;
 
   footer.innerHTML = footerHTML;
 
-  /* ------------------------------
-     QRコードスキャン
-  ------------------------------ */
+
   const html5QrCode = new Html5Qrcode("reader");
   const cameraToggleBtn = document.getElementById("cameraToggleBtn");
   const cameraSelect = document.getElementById("cameraSelect");
@@ -207,11 +206,9 @@
       devices.forEach((cam,index)=>{
         const opt = document.createElement("option");
         opt.value = cam.id;
-        // ラベルに背面カメラ優先を付加
         opt.textContent = cam.label || `カメラ ${index+1}`;
         cameraSelect.appendChild(opt);
       });
-      // スマホなら背面カメラ優先
       if(devices.length > 0){
         const backCam = devices.find(d => /back|rear|環境/i.test(d.label));
         if(backCam) cameraSelect.value = backCam.id;

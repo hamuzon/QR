@@ -81,6 +81,13 @@
       background-color: var(--button-hover);
       box-shadow: 0 6px 12px rgba(0,0,0,0.8);
     }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      user-select: none;
+    }
+    a.link { color: var(--text); text-decoration: none; }
+    a.link:hover { text-decoration: underline; }
     @media (max-width: 600px) {
       h1 {
         font-size: 3.5rem;
@@ -97,12 +104,40 @@
   <p class="subtext">Sorry, Not Found.</p>
   <a id="backLink" class="back" href="/">トップページへ戻る / Back to Home</a>
 
+  <footer id="footer-copy"></footer>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (location.hostname === 'hamuzon.github.io') {
         document.getElementById('backLink').href = 'https://hamuzon.github.io/QR/';
       }
     });
+
+    (() => {
+      const footer = document.getElementById("footer-copy");
+      if (!footer) {
+        return;
+      }
+
+      const baseYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const hostname = location.hostname;
+      const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+      let footerHTML = "";
+
+      if (hostname === "hamuzon.github.io") {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamuzon-jp.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else if (hostname.includes("qr.link-s.f5.si") || hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else {
+        footerHTML = `&copy; ${yearString} QR Tools`;
+      }
+      footer.innerHTML = footerHTML;
+    })();
   </script>
 </body>
 </html>
