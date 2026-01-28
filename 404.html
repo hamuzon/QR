@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>404 エラーコード - Error</title>
+  <title>404 - Not Found / 見つかりません</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
     :root {
@@ -93,29 +93,16 @@
 </head>
 <body>
   <h1>404 - error</h1>
-  <p>エラーが発生しました: 見つかりません</p>
+  <p>エラーが発生しました: 見つかりません / Not Found</p>
   <p class="subtext">Sorry, Not Found.</p>
-  <a id="backLink" class="back" href="/">トップページへ戻る</a>
+  <a id="backLink" class="back" href="/">トップページへ戻る / Back to Home</a>
 
   <script>
-    (function() {
-      const path = location.pathname.toLowerCase();
-
-      let backUrl = "/";
-
-      if (path.startsWith("/blog")) {
-        backUrl = "/blog-home";
-      } else if (path.startsWith("/products")) {
-        backUrl = "/shop";
-      } else if (path.startsWith("/about")) {
-        backUrl = "/company-info";
+    document.addEventListener('DOMContentLoaded', () => {
+      if (location.hostname === 'hamuzon.github.io') {
+        document.getElementById('backLink').href = 'https://hamuzon.github.io/QR/';
       }
-
-      const backLinkEl = document.getElementById("backLink");
-      if (backLinkEl) {
-        backLinkEl.href = backUrl;
-      }
-    })();
+    });
   </script>
 </body>
 </html>
