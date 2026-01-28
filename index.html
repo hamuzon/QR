@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Function Selection</title>
+  <title>QR Tools Hub</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
     * {
@@ -12,38 +12,41 @@
       box-sizing: border-box;
     }
 
-    html {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(180deg, #87ceeb 0%, #a0d8f7 30%, #c7e9ff 70%, #ffffff 100%);
-    }
-
     body {
-      min-height: 100%;
+      min-height: 100vh;
       width: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #333;
-      padding: 1rem;
-      background: transparent;
+      padding: 20px;
+      background: linear-gradient(135deg, #87ceeb 0%, #89c4f4 50%, #c7e9ff 100%);
+      background-attachment: fixed;
+      background-size: cover;
     }
 
     .wrapper {
       width: 100%;
       max-width: 980px;
-      margin: 2rem auto;
+      margin: 0 auto;
       padding: 2rem;
       border-radius: 1rem;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 2rem;
+      width: 100%;
+      margin-bottom: auto;
     }
 
     h1 {
@@ -60,6 +63,7 @@
       font-size: 1rem;
       line-height: 1.6;
       margin-bottom: 2rem;
+      word-wrap: break-word;
     }
 
     .btn-wrapper {
@@ -71,6 +75,7 @@
       padding: 1.5rem;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       transition: transform 0.25s, box-shadow 0.25s;
+      height: 100%;
     }
 
     .btn-wrapper:hover {
@@ -86,16 +91,21 @@
       font-weight: bold;
       color: #fff;
       background-color: #3399ff;
+      background-image: linear-gradient(45deg, #3399ff, #0077e6);
       border: none;
       border-radius: 0.6rem;
       cursor: pointer;
       text-decoration: none;
       user-select: none;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(51, 153, 255, 0.3);
     }
 
     .btn:hover {
       background-color: #1673e6;
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.4);
     }
 
     .btn-desc {
@@ -104,18 +114,20 @@
       color: #444;
       line-height: 1.5;
       text-align: center;
+      word-wrap: break-word;
     }
 
     footer {
       font-size: 0.85rem;
-      color: #666;
+      color: #333;
       text-align: center;
       user-select: none;
       margin: 2rem 0 1rem 0;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
 
     a.link {
-      color: #666;
+      color: #0056b3;
       text-decoration: none;
     }
 
@@ -147,7 +159,7 @@
       </p>
 
       <div class="btn-wrapper">
-        <a href="short-url-qr.html" class="btn" target="_self">
+        <a href="short-url-qr.html" class="btn">
           短縮URL & QRコード生成 / Short URL & QR Code Generator
         </a>
         <p class="btn-desc">
@@ -157,7 +169,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="QR.html" class="btn" target="_self">
+        <a href="QR.html" class="btn">
           QRコード生成のみ / QR Code Generator Only
         </a>
         <p class="btn-desc">
@@ -167,7 +179,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="qrcode-tool.html" class="btn" target="_self">
+        <a href="qrcode-tool.html" class="btn">
           QRコード ツール (メール,電話等機能ありQR)
         </a>
         <p class="btn-desc">
@@ -177,7 +189,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="scan.html" class="btn" target="_self">
+        <a href="scan.html" class="btn">
           QR読み取りツール / QR Scanner
         </a>
         <p class="btn-desc">
@@ -187,7 +199,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="mc-qr.html" class="btn" target="_self">
+        <a href="mc-qr.html" class="btn">
           マイクラ等ドットQR (永遠β) / Minecraft-style Dot QR (Beta)
         </a>
         <p class="btn-desc">
@@ -197,7 +209,7 @@
       </div>
 
       <div class="btn-wrapper">
-        <a href="mail.html" class="btn" target="_self">
+        <a href="mail.html" class="btn">
           ✉️ メールQRコード作成 ツール / Email QR Code Creation Tool✉️
         </a>
         <p class="btn-desc">
@@ -213,21 +225,25 @@
   <footer id="footer-copy"></footer>
 
   <script>
+    const footer = document.getElementById("footer-copy");
     const baseYear = 2025;
     const currentYear = new Date().getFullYear();
+    const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
     const hostname = location.hostname;
-    const footer = document.getElementById("footer-copy");
-    let footerHTML = "";
-    if(hostname==="hamuzon.github.io"){
-      footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-    } else if(hostname.includes("qr.hamusata.f5.si")){
-      footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>`;
-    } else if(hostname.includes("qr.link-s.f5.si")){
-      footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} <a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+
+    let linkHTML;
+    if (hostname === "hamuzon.github.io") {
+      linkHTML = `<a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
+    } else if (hostname.includes("hamusata.f5.si")) {
+      linkHTML = `<a class="link" href="https://home.hamusata.f5.si" target="_blank">@hamusata</a>`;
+    } else if (hostname.includes("hamuzon-jp.f5.si")) {
+      linkHTML = `<a class="link" href="https://hamuzon-jp.f5.si" target="_blank">@hamuzon</a>`;
+    } else if (hostname.includes("qr.link-s.f5.si")) {
+      linkHTML = `<a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
     } else {
-      footerHTML = `&copy; ${baseYear}${currentYear>baseYear?"–"+currentYear:""} QR Code Generator`;
+      linkHTML = `QR Code Generator`;
     }
-    footer.innerHTML = footerHTML;
+    footer.innerHTML = `&copy; ${yearString} ${linkHTML}`;
   </script>
 
 </body>
