@@ -174,17 +174,22 @@
         alert("⚠️ 入力が空です");
         return;
       }
-
+      
+      
       QRCode.toCanvas(input, { width: 256 }, (err, canvas) => {
         if (err) {
-          alert("QRコードの生成に失敗しました");
           console.error(err);
+          alert(
+            "QRコードの生成に失敗しました\n\n" +
+            "エラー内容:\n" +
+            (err.message ?? String(err))
+          );
           return;
         }
-        qrDiv.appendChild(canvas);
-        downloadBtn.style.display = "inline-block";
-      });
-    }
+
+  qrDiv.appendChild(canvas);
+  downloadBtn.style.display = "inline-block";
+});
 
     function downloadQRCode() {
       const canvas = document.querySelector("#qrcode canvas");
