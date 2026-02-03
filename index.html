@@ -6,6 +6,7 @@
   <title>QR Tools Hub</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
+
     * {
       margin: 0;
       padding: 0;
@@ -143,6 +144,7 @@
         padding: 1rem;
       }
     }
+    
   </style>
 </head>
 <body>
@@ -222,7 +224,9 @@
 
   </div>
 
-  <footer id="footer-copy"></footer>
+  <footer id="footer-copy">
+    &copy; 2025 QR Tools Hub
+  </footer>
 
   <script>
     const footer = document.getElementById("footer-copy");
@@ -239,8 +243,6 @@
     } else if (hostname.includes("hamusata.f5.si")) {
       footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
     } else if (hostname.includes("qr.link-s.f5.si")) {
-      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-    } else if (hostname.includes("hamusata.f5.si")) {
       footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
     } else {
       footerHTML = `&copy; ${yearString} QR Tools Hub`;
