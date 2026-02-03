@@ -161,127 +161,137 @@
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+<script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 <script>
-  const baseYear = 2025;
-  const currentYear = new Date().getFullYear();
-  const hostname = location.hostname;
-  const footer = document.getElementById("footer-copy");
-  const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
-  let footerHTML = "";
 
-  if (hostname === "hamuzon.github.io") {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-  } else if (hostname.includes("hamuzon-jp.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-  } else if (hostname.includes("hamusata.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else if (hostname.includes("qr.link-s.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else if (hostname.includes("hamusata.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else {
-    footerHTML = `&copy; ${yearString} QR Code Scanner`;
+const baseYear = 2025;
+const year = new Date().getFullYear();
+const host = location.hostname;
+const footer = document.getElementById("footer-copy");
+const yearStr = baseYear + (year > baseYear ? "–" + year : "");
+let footerHTML = "";
+
+if (host.includes("hamuzon")) {
+  footerHTML = `&copy; ${yearStr} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
+} else if (host.includes("hamusata")) {
+  footerHTML = `&copy; ${yearStr} <a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+} else {
+  footerHTML = `&copy; ${yearStr} QR Code Scanner`;
+}
+
+footerHTML += `<p>
+  このサービスは
+  <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank">html5-qrcode</a> と
+  <a class="link" href="https://unpkg.com/jsqr/dist/jsQR.js" target="_blank">jsQR</a>
+  を使用しています。
+</p>`;
+footer.innerHTML = footerHTML;
+
+/* ===== QR処理 ===== */
+const html5QrCode = new Html5Qrcode("reader");
+const cameraToggleBtn = document.getElementById("cameraToggleBtn");
+const cameraSelect = document.getElementById("cameraSelect");
+const scanResult = document.getElementById("scanResult");
+const resetBtn = document.getElementById("resetBtn");
+const fileInput = document.getElementById("fileInput");
+
+let cameraRunning = false;
+
+/* カメラ取得 */
+async function loadCameras(){
+  try {
+    const devices = await Html5Qrcode.getCameras();
+    cameraSelect.innerHTML = "";
+    devices.forEach((cam,i)=>{
+      const opt = document.createElement("option");
+      opt.value = cam.id;
+      opt.textContent = cam.label || `カメラ ${i+1}`;
+      cameraSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error(err);
+    cameraSelect.innerHTML = '<option>カメラ取得エラー</option>';
+    alert(
+      "カメラ一覧の取得に失敗しました\n\n" +
+      (err?.message ?? String(err))
+    );
   }
+}
+loadCameras();
 
-  footerHTML += `<p>このサービスは 
-    <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank" rel="noopener noreferrer">html5-qrcode</a> と 
-    <a class="link" href="https://unpkg.com/jsqr/dist/jsQR.js" target="_blank" rel="noopener noreferrer">jsQR</a> ライブラリを使用しています。</p>`;
+function isURL(str){ return /^https?:\/\//i.test(str); }
 
-  footer.innerHTML = footerHTML;
+function showResult(text){
+  scanResult.innerHTML = isURL(text)
+    ? `<a class="link" href="${text}" target="_blank">${text}</a>`
+    : text;
+  scanResult.style.display = "inline-block";
+  resetBtn.style.display = "inline-block";
+}
 
+function resetScan(){
+  scanResult.textContent = "";
+  scanResult.style.display = "none";
+  resetBtn.style.display = "none";
+}
+resetBtn.onclick = resetScan;
 
-  const html5QrCode = new Html5Qrcode("reader");
-  const cameraToggleBtn = document.getElementById("cameraToggleBtn");
-  const cameraSelect = document.getElementById("cameraSelect");
-  const scanResult = document.getElementById("scanResult");
-  const resetBtn = document.getElementById("resetBtn");
-  const fileInput = document.getElementById("fileInput");
-
-  let cameraRunning = false;
-
-  async function loadCameras(){
-    try{
-      const devices = await Html5Qrcode.getCameras();
-      cameraSelect.innerHTML = "";
-      devices.forEach((cam,index)=>{
-        const opt = document.createElement("option");
-        opt.value = cam.id;
-        opt.textContent = cam.label || `カメラ ${index+1}`;
-        cameraSelect.appendChild(opt);
-      });
-      if(devices.length > 0){
-        const backCam = devices.find(d => /back|rear|環境/i.test(d.label));
-        if(backCam) cameraSelect.value = backCam.id;
-      }
-    } catch(err){
-      cameraSelect.innerHTML = '<option value="">カメラ取得エラー</option>';
-    }
+/* カメラON/OFF */
+cameraToggleBtn.onclick = async ()=>{
+  if (cameraRunning) {
+    await html5QrCode.stop();
+    cameraRunning = false;
+    cameraToggleBtn.textContent = "カメラON";
+    return;
   }
-  loadCameras();
-
-  function isURL(str){
-    return /^https?:\/\//i.test(str);
-  }
-
-  function showResult(text){
-    if(isURL(text)){
-      scanResult.innerHTML = `<a class="link" href="${text}" target="_blank">${text}</a>`;
-    } else {
-      scanResult.textContent = text;
-    }
-    scanResult.style.display = "inline-block";
-    resetBtn.style.display = "inline-block";
-  }
-
-  function resetScan(){
-    scanResult.textContent = "";
-    scanResult.style.display = "none";
-    resetBtn.style.display = "none";
-  }
-
-  resetBtn.addEventListener("click", resetScan);
-
-  cameraToggleBtn.addEventListener("click", async ()=>{
-    if(cameraRunning){
-      await html5QrCode.stop();
-      cameraRunning = false;
-      cameraToggleBtn.textContent = "カメラON";
-    } else {
-      const camId = cameraSelect.value || { facingMode:"environment" };
-      try{
-        resetScan();
-        await html5QrCode.start(
-          camId,
-          { fps: 10, qrbox: 250 },
-          decoded => showResult(decoded)
-        );
-        cameraRunning = true;
-        cameraToggleBtn.textContent = "カメラOFF";
-      } catch(e){
-        alert("カメラ開始に失敗しました");
-      }
-    }
-  });
-
-  cameraSelect.addEventListener("change", resetScan);
-
-  fileInput.addEventListener("change", e=>{
+  try {
     resetScan();
-    const file = e.target.files[0];
-    if(!file) return;
-    const img = new Image();
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    img.onload = ()=>{
+    const camId = cameraSelect.value || { facingMode:"environment" };
+    await html5QrCode.start(
+      camId,
+      { fps: 10, qrbox: 250 },
+      txt => showResult(txt)
+    );
+    cameraRunning = true;
+    cameraToggleBtn.textContent = "カメラOFF";
+  } catch (err) {
+    console.error(err);
+    alert(
+      "カメラ開始に失敗しました\n\n" +
+      (err?.message ?? String(err)) +
+      "\n\n※ HTTPS / 権限 / 他アプリ使用中 を確認してください"
+    );
+  }
+};
+
+/* 画像アップロード */
+fileInput.onchange = e=>{
+  resetScan();
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  img.onload = ()=>{
+    try {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img,0,0);
-      const code = jsQR(ctx.getImageData(0,0,img.width,img.height).data,img.width,img.height);
+      const imageData = ctx.getImageData(0,0,img.width,img.height);
+      const code = jsQR(imageData.data, img.width, img.height);
       showResult(code ? code.data : "QRコードが見つかりません");
-    };
-    img.src = URL.createObjectURL(file);
-  });
-
+    } catch (err) {
+      console.error(err);
+      alert(
+        "画像の解析に失敗しました\n\n" +
+        (err?.message ?? String(err))
+      );
+    }
+  };
+  img.src = URL.createObjectURL(file);
+};
 </script>
 </body>
 </html>

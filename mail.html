@@ -207,15 +207,24 @@ function generateQR(auto = false) {
 
   const qr = document.getElementById('qrcode')
   qr.innerHTML = ''
+    
+  
+  QRCode.toCanvas(input, { width: 256 }, (err, canvas) => {
+    if (err) {
+      console.error(err);
+      alert(
+        "QRコードの生成に失敗しました\n\n" +
+        "エラー内容:\n" +
+        (err.message ?? String(err))
+      );
+      return;
+    }
 
-  QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
-    if (err) return alert('QRコード生成に失敗しました')
+  qr.appendChild(canvas);
+  downloadBtn.style.display = "inline-block";
+  shareBtn.style.display = "inline-block";
+});
 
-    qr.appendChild(canvas)
-    downloadBtn.style.display = 'inline-block'
-    shareBtn.style.display = 'inline-block'
-  })
-}
 
 function downloadQR() {
 

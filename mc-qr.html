@@ -155,9 +155,20 @@ async function generateMCQR(){
 
   let MAX_BLOCKS = parseInt(document.getElementById("maxSize").value)||64;
   if(MAX_BLOCKS<1) MAX_BLOCKS=1;
+  
+  const tempCanvas = document.createElement("canvas");
+  try {
+    await QRCode.toCanvas(tempCanvas, text, { width: 0, margin: 1 });
+  } catch (err) {
+    console.error(err);
+    alert(
+      "QRコードの生成に失敗しました\n\n" +
+      "エラー内容:\n" +
+      (err?.message ?? String(err))
+      ;
+    return;
+  }
 
-  const tempCanvas=document.createElement("canvas");
-  await QRCode.toCanvas(tempCanvas, text, {width:0,margin:1});
   const origX = tempCanvas.width;
   const origY = tempCanvas.height;
 
