@@ -1,173 +1,129 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
   <link rel="icon" href="https://hamusata.f5.si/favicon.ico" type="image/x-icon">
-
+  
   <style>
-    :root {
-      --color-accent: #3399ff;
-      --color-accent-hover: #1673e6;
-      --color-error: #d33;
-      --link-color: #4CAF50;
-      --card-bg: rgba(255, 255, 255, 0.88);
-      --bg-gradient: linear-gradient(
-        180deg,
-        #f9e6e7 0%,
-        #fce8d8 30%,
-        #d9f0e6 70%,
-        #a8d0e6 100%
-      );
-    }
+:root{
+  --accent:#3399ff;
+  --accent-hover:#1673e6;
+  --error:#d33;
+  --link:#4CAF50;
+  --card-bg:rgba(255,255,255,.88);
+  --bg:linear-gradient(180deg,#f9e6e7 0%,#fce8d8 30%,#d9f0e6 70%,#a8d0e6 100%);
+}
 
-    * {
-      box-sizing: border-box;
-    }
+*{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial,
-        sans-serif;
-      background: var(--bg-gradient);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1.5rem;
-    }
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+}
 
-    main.container {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border-radius: 1.5rem;
-      padding: 2.5rem 2rem;
-      max-width: 480px;
-      width: 100%;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      text-align: center;
-    }
+body{
+  display:grid;
+  place-items:center;
+  background:var(--bg);
+  font-family:'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
+}
 
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1.8rem;
-      color: #333;
-      line-height: 1.3;
-    }
+.container{
+  display:grid;
+  justify-items:center;
+  gap:1rem;
+  width:min(92vw,520px);
+  padding:2.2rem 2rem;
+  background:var(--card-bg);
+  backdrop-filter:blur(12px);
+  border-radius:24px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  text-align:center;
+}
 
-    button {
-      padding: 0.85rem;
-      font-size: 1.15rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 14px;
-      background-color: var(--color-accent);
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 6px 15px rgba(51, 153, 255, 0.65);
-      margin: 0.6rem auto;
-      width: 80%;
-      max-width: 260px;
-      transition: background-color 0.25s ease;
-      display: block;
-    }
+h1{
+  margin:0 0 .8rem;
+  font-size:2rem;
+  color:#333;
+}
 
-    button:hover {
-      background-color: var(--color-accent-hover);
-    }
+button{
+  width:80%;
+  max-width:260px;
+  padding:.85rem;
+  font-size:1.1rem;
+  font-weight:700;
+  border:none;
+  border-radius:14px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 15px rgba(51,153,255,.6);
+}
 
-    #cameraSelect {
-      padding: 0.7rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 12px;
-      border: 2px solid #ccc;
-      width: 80%;
-      max-width: 240px;
-      margin: 0.5rem auto 1rem auto;
-      display: block;
-    }
+button:hover{background:var(--accent-hover)}
 
-    #reader {
-      width: 100%;
-      max-width: 360px;
-      margin: 1.2rem auto;
-      border-radius: 12px;
-      overflow: hidden;
-    }
+#cameraSelect{
+  width:80%;
+  max-width:240px;
+  padding:.7rem;
+  font-size:1rem;
+  font-weight:600;
+  border-radius:12px;
+  border:2px solid #ccc;
+}
 
-    #scanResult {
-      margin-top: 1rem;
-      font-weight: bold;
-      color: #000;
-      font-size: 1.15rem;
-      line-height: 1.5;
-      word-wrap: break-word;
-      max-width: 100%;
-      display: none;
-    }
+#reader{
+  width:100%;
+  max-width:360px;
+}
 
-    #resetBtn {
-      margin-top: 0.8rem;
-      background: var(--color-error);
-      width: auto;
-      padding: 0.55rem 1rem;
-      font-size: 0.95rem;
-      border-radius: 12px;
-      display: none;
-    }
+#scanResult{
+  display:none;
+  font-size:1.15rem;
+  font-weight:700;
+  word-break:break-all;
+}
 
-    #resetBtn:hover {
-      background: #b00;
-    }
+#resetBtn{
+  display:none;
+  background:var(--error);
+  font-size:.95rem;
+  padding:.55rem 1rem;
+}
 
-    #torchBtn {
-      background-color: #ff9800;
-      box-shadow: 0 6px 15px rgba(255, 152, 0, 0.65);
-      display: none;
-    }
+#resetBtn:hover{background:#b00}
 
-    #torchBtn:hover {
-      background-color: #f57c00;
-    }
+input[type=file]{
+  width:80%;
+  max-width:240px;
+  padding:.5rem;
+  font-size:1rem;
+  border-radius:12px;
+  border:1px solid #ccc;
+  cursor:pointer;
+}
 
-    input[type="file"] {
-      margin-top: 1rem;
-      font-size: 1rem;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      width: 80%;
-      max-width: 240px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      cursor: pointer;
-    }
+footer{
+  font-size:.85rem;
+  color:#555;
+}
 
-    footer {
-      margin-top: 2rem;
-      font-size: 0.85rem;
-      color: #555;
-      user-select: none;
-      line-height: 1.4;
-    }
+a{
+  color:var(--link);
+  text-decoration:none;
+}
 
-    a.link {
-      color: var(--link-color);
-      text-decoration: none;
-    }
+a:hover{text-decoration:underline}
+</style>
 
-    a.link:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 
 <body>
-
+  
   <main class="container">
     <h1>QR Code Scanner</h1>
 
@@ -192,25 +148,32 @@
   </main>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
-
+ 
   <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
   <script>
-    const baseYear = 2025;
-    const year = new Date().getFullYear();
-    const host = location.hostname;
     const footer = document.getElementById("footer-copy");
-    const yearStr = baseYear + (year > baseYear ? "–" + year : "");
+    const baseYear = 2025;
+    const currentYear = new Date().getFullYear();
+    const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+    const hostname = location.hostname;
     let footerHTML = "";
 
-    if (host.includes("hamuzon")) {
-      footerHTML = `&copy; ${yearStr} <a class="link" href="https://hamuzon.github.io" target="_blank">@hamuzon</a>`;
-    } else if (host.includes("hamusata")) {
-      footerHTML = `&copy; ${yearStr} <a class="link" href="https://hamusata.f5.si" target="_blank">@hamusata</a>`;
+    if (hostname === "hamuzon.github.io") {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+    } else if (hostname.includes("hamuzon-jp.f5.si")) {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+    } else if (hostname.includes("hamusata.f5.si")) {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+    } else if (hostname.includes("qr.link-s.f5.si")) {
+      footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
     } else {
-      footerHTML = `&copy; ${yearStr} QR Code Scanner`;
+      footerHTML = `&copy; ${yearString} QR Code Scanner`;
     }
+    footer.innerHTML = footerHTML;
+  </script>
 
+ <script>
     footerHTML += `<p>
       このサービスは
       <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank">html5-qrcode</a> と
@@ -235,20 +198,17 @@
         const devices = await Html5Qrcode.getCameras();
         cameraSelect.innerHTML = "";
         let backCameraId = null;
-
         devices.forEach((cam, i) => {
           const opt = document.createElement("option");
           opt.value = cam.id;
           opt.textContent = cam.label || `カメラ ${i + 1}`;
           cameraSelect.appendChild(opt);
-
           if (cam.label.toLowerCase().includes("back") ||
             cam.label.toLowerCase().includes("rear") ||
             cam.label.toLowerCase().includes("environment")) {
             backCameraId = cam.id;
           }
         });
-
         if (backCameraId) {
           cameraSelect.value = backCameraId;
         }
@@ -258,7 +218,6 @@
         alert("カメラ一覧の取得に失敗しました\n\n" + (err?.message ?? String(err)));
       }
     }
-
     loadCameras();
 
     function isURL(str) {
@@ -276,7 +235,6 @@
       scanResult.style.display = "none";
       resetBtn.style.display = "none";
     }
-
     resetBtn.onclick = resetScan;
 
     cameraToggleBtn.onclick = async () => {
@@ -293,7 +251,6 @@
         }
         return;
       }
-
       try {
         resetScan();
         const camId = cameraSelect.value;
@@ -301,21 +258,15 @@
           fps: 10,
           qrbox: 250
         };
-
         await html5QrCode.start(
-          camId ? camId : {
-            facingMode: "environment"
-          },
+          camId ? camId : { facingMode: "environment" },
           config,
           txt => showResult(txt)
         );
-
         cameraRunning = true;
         cameraToggleBtn.textContent = "カメラOFF";
-
         try {
           const capabilities = html5QrCode.getRunningTrackCameraCapabilities();
-
           if (capabilities && capabilities.torch) {
             torchBtn.style.display = "block";
           }
@@ -330,17 +281,17 @@
 
     torchBtn.onclick = async () => {
       try {
+        isTorchOn = !isTorchOn;
         await html5QrCode.applyVideoConstraints({
           advanced: [{
-            torch: !isTorchOn
+            torch: isTorchOn
           }]
         });
-
-        isTorchOn = !isTorchOn;
         torchBtn.textContent = isTorchOn ? "ライトOFF" : "ライトON";
       } catch (err) {
         console.error(err);
         alert("ライトの切り替えに失敗しました");
+        isTorchOn = !isTorchOn;
       }
     };
 
@@ -348,29 +299,27 @@
       resetScan();
       const file = e.target.files[0];
       if (!file) return;
-
       const img = new Image();
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-
       img.onload = () => {
         try {
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
-
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
           const code = jsQR(imageData.data, img.width, img.height);
-
           showResult(code ? code.data : "QRコードが見つかりません");
         } catch (err) {
           console.error(err);
           alert("画像の解析に失敗しました\n\n" + (err?.message ?? String(err)));
         }
       };
-
       img.src = URL.createObjectURL(file);
     };
+
   </script>
+
 </body>
+
 </html>
