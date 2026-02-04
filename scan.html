@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
   <link rel="icon" href="https://hamusata.f5.si/favicon.ico" type="image/x-icon">
-  
+
   <style>
-  
-  :root {
+    :root {
       --color-accent: #3399ff;
       --color-accent-hover: #1673e6;
       --color-error: #d33;
       --link-color: #4CAF50;
       --card-bg: rgba(255, 255, 255, 0.88);
-      --bg-gradient: linear-gradient(180deg, #f9e6e7 0%, #fce8d8 30%, #d9f0e6 70%, #a8d0e6 100%);
+      --bg-gradient: linear-gradient(
+        180deg,
+        #f9e6e7 0%,
+        #fce8d8 30%,
+        #d9f0e6 70%,
+        #a8d0e6 100%
+      );
     }
 
     * {
@@ -23,7 +29,8 @@
 
     body {
       margin: 0;
-      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial,
+        sans-serif;
       background: var(--bg-gradient);
       display: flex;
       justify-content: center;
@@ -39,7 +46,7 @@
       padding: 2.5rem 2rem;
       max-width: 480px;
       width: 100%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       text-align: center;
     }
 
@@ -156,13 +163,11 @@
     a.link:hover {
       text-decoration: underline;
     }
-
   </style>
-
 </head>
 
 <body>
-  
+
   <main class="container">
     <h1>QR Code Scanner</h1>
 
@@ -187,10 +192,10 @@
   </main>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
- 
+
   <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
- <script>
+  <script>
     const baseYear = 2025;
     const year = new Date().getFullYear();
     const host = location.hostname;
@@ -230,17 +235,20 @@
         const devices = await Html5Qrcode.getCameras();
         cameraSelect.innerHTML = "";
         let backCameraId = null;
+
         devices.forEach((cam, i) => {
           const opt = document.createElement("option");
           opt.value = cam.id;
           opt.textContent = cam.label || `カメラ ${i + 1}`;
           cameraSelect.appendChild(opt);
+
           if (cam.label.toLowerCase().includes("back") ||
             cam.label.toLowerCase().includes("rear") ||
             cam.label.toLowerCase().includes("environment")) {
             backCameraId = cam.id;
           }
         });
+
         if (backCameraId) {
           cameraSelect.value = backCameraId;
         }
@@ -250,6 +258,7 @@
         alert("カメラ一覧の取得に失敗しました\n\n" + (err?.message ?? String(err)));
       }
     }
+
     loadCameras();
 
     function isURL(str) {
@@ -267,6 +276,7 @@
       scanResult.style.display = "none";
       resetBtn.style.display = "none";
     }
+
     resetBtn.onclick = resetScan;
 
     cameraToggleBtn.onclick = async () => {
@@ -283,6 +293,7 @@
         }
         return;
       }
+
       try {
         resetScan();
         const camId = cameraSelect.value;
@@ -290,15 +301,21 @@
           fps: 10,
           qrbox: 250
         };
+
         await html5QrCode.start(
-          camId ? camId : { facingMode: "environment" },
+          camId ? camId : {
+            facingMode: "environment"
+          },
           config,
           txt => showResult(txt)
         );
+
         cameraRunning = true;
         cameraToggleBtn.textContent = "カメラOFF";
+
         try {
           const capabilities = html5QrCode.getRunningTrackCameraCapabilities();
+
           if (capabilities && capabilities.torch) {
             torchBtn.style.display = "block";
           }
@@ -313,17 +330,17 @@
 
     torchBtn.onclick = async () => {
       try {
-        isTorchOn = !isTorchOn;
         await html5QrCode.applyVideoConstraints({
           advanced: [{
-            torch: isTorchOn
+            torch: !isTorchOn
           }]
         });
+
+        isTorchOn = !isTorchOn;
         torchBtn.textContent = isTorchOn ? "ライトOFF" : "ライトON";
       } catch (err) {
         console.error(err);
         alert("ライトの切り替えに失敗しました");
-        isTorchOn = !isTorchOn;
       }
     };
 
@@ -331,27 +348,29 @@
       resetScan();
       const file = e.target.files[0];
       if (!file) return;
+
       const img = new Image();
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+
       img.onload = () => {
         try {
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
+
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
           const code = jsQR(imageData.data, img.width, img.height);
+
           showResult(code ? code.data : "QRコードが見つかりません");
         } catch (err) {
           console.error(err);
           alert("画像の解析に失敗しました\n\n" + (err?.message ?? String(err)));
         }
       };
+
       img.src = URL.createObjectURL(file);
     };
-
   </script>
-
 </body>
-
 </html>
