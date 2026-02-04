@@ -209,7 +209,7 @@ function generateQR(auto = false) {
   qr.innerHTML = ''
     
   
-  QRCode.toCanvas(input, { width: 256 }, (err, canvas) => {
+  QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
     if (err) {
       console.error(err);
       alert(
@@ -224,6 +224,7 @@ function generateQR(auto = false) {
   downloadBtn.style.display = "inline-block";
   shareBtn.style.display = "inline-block";
 });
+}
 
 
 function downloadQR() {
