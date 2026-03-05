@@ -6,92 +6,104 @@
   <title>404 - Not Found / 見つかりません</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
-    :root {
-      --bg: #1c1c1c;
-      --text: #dcdcdc;
-      --border: #3a3a3a;
-      --device-bg: #2a2a2a;
-      --status-bg: #333333;
-      --status-text: #aaaaaa;
-      --input-bg: #252525;
-      --button-bg: #3c3c3c;
-      --button-hover: #505050;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f7f3e9;
-        --text: #3b2f2f;
-        --border: #b7a98c;
-        --device-bg: #fffdf7;
-        --status-bg: #f2e8d5;
-        --status-text: #5c4b3b;
-        --input-bg: #fffaf3;
-        --button-bg: #d8c6a1;
-        --button-hover: #c5b38f;
-      }
-    }
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
+
     body {
-      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
-      background: var(--bg);
-      color: var(--text);
+      min-height: 100vh;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      color: #333;
       text-align: center;
-      padding: 2rem;
-      background-image: radial-gradient(circle at center, rgba(255 255 255 / 0.05), transparent 70%);
+      padding: 20px;
+      background: linear-gradient(135deg, #87ceeb 0%, #89c4f4 50%, #c7e9ff 100%);
+      background-attachment: fixed;
+      background-size: cover;
     }
+
+    .wrapper {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.2rem 1.8rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
     h1 {
-      font-size: 5rem;
-      margin-bottom: 0.3em;
-      letter-spacing: 0.15em;
+      font-size: clamp(2.6rem, 9vw, 4.4rem);
+      margin-bottom: 0.25em;
+      letter-spacing: 0.04em;
     }
+
     p {
-      font-size: 1.2rem;
-      margin: 0.3em 0;
-      color: var(--text);
-      opacity: 0.9;
+      font-size: 1.03rem;
+      margin: 0.4em 0;
+      color: #444;
+      line-height: 1.6;
     }
+
     .subtext {
-      font-size: 1rem;
-      color: var(--status-text);
-      margin-top: 0.5em;
-      opacity: 0.8;
+      font-size: 0.92rem;
+      color: #555;
+      margin-top: 0.35em;
     }
+
     a.back {
-      margin-top: 2rem;
-      padding: 0.75em 2em;
-      background-color: var(--button-bg);
-      color: var(--text);
+      display: inline-block;
+      margin-top: 1.8rem;
+      padding: 0.85rem 1.8rem;
+      font-size: 1rem;
+      background-color: #3399ff;
+      background-image: linear-gradient(45deg, #3399ff, #0077e6);
+      color: #fff;
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 0.6rem;
       font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 6px rgba(51, 153, 255, 0.3);
+      transition: all 0.3s ease;
       cursor: pointer;
     }
+
     a.back:hover {
-      background-color: var(--button-hover);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.8);
+      background-color: #1673e6;
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.4);
     }
+
     footer {
       margin-top: 2rem;
       font-size: 0.85rem;
+      color: #333;
       user-select: none;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
-    a.link { color: var(--text); text-decoration: none; }
-    a.link:hover { text-decoration: underline; }
+
+    a.link {
+      color: #0056b3;
+      text-decoration: none;
+    }
+
+    a.link:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 600px) {
-      h1 {
-        font-size: 3.5rem;
+      .wrapper {
+        padding: 1.8rem 1rem;
       }
+
       p {
         font-size: 1rem;
       }
@@ -99,12 +111,14 @@
   </style>
 </head>
 <body>
-  <h1>404 - error</h1>
-  <p>エラーが発生しました: 見つかりません / Not Found</p>
-  <p class="subtext">Sorry, Not Found.</p>
-  <a id="backLink" class="back" href="/">トップページへ戻る / Back to Home</a>
+  <div class="wrapper">
+    <h1>404 - error</h1>
+    <p>エラーが発生しました: 見つかりません / Not Found</p>
+    <p class="subtext">Sorry, Not Found.</p>
+    <a id="backLink" class="back" href="/">トップページへ戻る / Back to Home</a>
 
-  <footer id="footer-copy"></footer>
+    <footer id="footer-copy"></footer>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
