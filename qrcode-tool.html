@@ -26,6 +26,7 @@ body {
 }
 main.container {
   background: rgba(255,255,255,0.85);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 1.5rem;
   max-width: 520px;
@@ -78,6 +79,7 @@ button.action {
   box-shadow: 0 6px 15px rgba(51,153,255,0.7);
   margin: 0.3rem;
   width: 48%;
+  -webkit-user-select: none;
   user-select: none;
   transition: background-color 0.3s ease;
 }
@@ -98,6 +100,7 @@ footer {
   margin-top: 2.5rem;
   font-size: 0.85rem;
   line-height: 1.5;
+  -webkit-user-select: none;
   user-select: none;
   color: inherit;
   display: flex;
@@ -106,6 +109,17 @@ footer {
 }
 footer a { color: var(--link-color); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
+
+.toggle-pass-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent-light);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 
 @media(max-width:480px){
   button.action { width: 100%; }
@@ -132,16 +146,7 @@ footer a:hover { text-decoration: underline; }
   <input type="text" id="wifiSSID" placeholder="SSID">
   <div class="wifi-password-wrapper">
     <input type="password" id="wifiPassword" placeholder="パスワード">
-    <button type="button" id="togglePassword" style="
-      padding:0.3rem 0.5rem;
-      font-size:0.85rem;
-      border:none;
-      border-radius:6px;
-      background:var(--color-accent-light);
-      color:#fff;
-      cursor:pointer;
-      flex-shrink:0;
-    ">表示</button>
+    <button type="button" id="togglePassword" class="toggle-pass-btn">表示</button>
   </div>
   <select id="wifiEncrypt">
     <option value="WPA" selected>WPA/WPA2</option>

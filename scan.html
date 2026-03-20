@@ -38,6 +38,7 @@ body{
   width:min(92vw,520px);
   padding:2.2rem 2rem;
   background:var(--card-bg);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter:blur(12px);
   border-radius:24px;
   box-shadow:0 8px 24px rgba(0,0,0,.12);
@@ -119,6 +120,9 @@ a{
 
 a:hover{text-decoration:underline}
 </style>
+<style>
+  .upload-instruction { margin-top: 1.5rem; }
+</style>
 
 </head>
 
@@ -130,14 +134,14 @@ a:hover{text-decoration:underline}
     <button id="cameraToggleBtn">カメラON</button>
     <button id="torchBtn">ライトON</button>
 
-    <select id="cameraSelect">
+    <select id="cameraSelect" aria-label="カメラを選択">
       <option value="">カメラ読み込み中...</option>
     </select>
 
     <div id="reader"></div>
 
-    <p style="margin-top:1.5rem;">カメラで読み取れない場合は画像をアップロード:</p>
-    <input type="file" id="fileInput" accept="image/*">
+    <p class="upload-instruction">カメラで読み取れない場合は画像をアップロード:</p>
+    <input type="file" id="fileInput" accept="image/*" aria-label="画像ファイルをアップロード">
 
     <div id="resultBox">
       <span id="scanResult"></span><br>

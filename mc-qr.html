@@ -29,6 +29,7 @@ body {
 }
 main.container {
   background: rgba(255,255,255,0.9);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius:1.5rem;
   width:100%;
@@ -49,6 +50,11 @@ input[type="text"], input[type="number"] {
   margin:0.2rem;
 }
 input:focus { border-color: var(--color-accent-light); }
+.settings-group {
+  margin-top:0.5rem;
+}
+#maxSize { width: 60px; }
+
 #buttonGroup {
   display:flex;
   flex-wrap:wrap;
@@ -102,8 +108,8 @@ footer a:hover{text-decoration:underline;}
 <main class="container">
 <h1>Minecraft QR Generator / マイクラQRジェネレーター</h1>
 <input type="text" id="inputText" placeholder="URL or Text / URL またはテキスト">
-<div style="margin-top:0.5rem;">
-<label>最大ブロック数 / Max Blocks: <input type="number" id="maxSize" value="64" min="1" max="128" style="width:60px"></label>
+<div class="settings-group">
+<label>最大ブロック数 / Max Blocks: <input type="number" id="maxSize" value="64" min="1" max="128"></label>
 </div>
 <div id="buttonGroup">
 <button onclick="generateMCQR()">Generate QR / 生成</button>
