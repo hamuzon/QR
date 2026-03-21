@@ -94,8 +94,8 @@
       margin: 0;
     }
 
-    /* カメラ起動中は2カラムにする */
-    .controls.active {
+    /* カメラ起動中は2カラムにする（ライトがある場合のみ） */
+    .controls.active.has-torch {
       grid-template-columns: 1fr 1fr;
       width: 100%;
       max-width: 320px;
@@ -383,6 +383,7 @@
           cameraToggleBtn.textContent = "カメラ起動";
           cameraToggleBtn.classList.remove("secondary");
           controls.classList.remove("active");
+          controls.classList.remove("has-torch");
 
           // ライト状態リセット
           torchBtn.style.display = "none";
@@ -401,8 +402,10 @@
         const capabilities = html5QrCode.getRunningTrackCapabilities();
         if (capabilities && capabilities.torch) {
           torchBtn.style.display = "inline-block";
+          controls.classList.add("has-torch");
         } else {
           torchBtn.style.display = "none";
+          controls.classList.remove("has-torch");
         }
       } catch (e) {
         console.warn("Torch check failed", e);
