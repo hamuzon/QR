@@ -1,133 +1,145 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
-  <link rel="icon" href="https://hamusata.f5.si/favicon.ico" type="image/x-icon">
-  
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
   <style>
-:root{
-  --accent:#3399ff;
-  --accent-hover:#1673e6;
-  --error:#d33;
-  --link:#4CAF50;
-  --card-bg:rgba(255,255,255,.88);
-  --bg:linear-gradient(180deg,#f9e6e7 0%,#fce8d8 30%,#d9f0e6 70%,#a8d0e6 100%);
-}
+    :root {
+      --accent: #3399ff;
+      --accent-hover: #1673e6;
+      --error: #d33;
+      --link: #4CAF50;
+      --card-bg: rgba(255, 255, 255, .88);
+      --bg: linear-gradient(180deg, #f9e6e7 0%, #fce8d8 30%, #d9f0e6 70%, #a8d0e6 100%);
+    }
 
-*{box-sizing:border-box}
+    * {
+      box-sizing: border-box
+    }
 
-html,body{
-  width:100%;
-  height:100%;
-  margin:0;
-}
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
 
-body{
-  display:grid;
-  place-items:center;
-  background:var(--bg);
-  font-family:'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
-}
+    body {
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+    }
 
-.container{
-  display:grid;
-  justify-items:center;
-  gap:1rem;
-  width:min(92vw,520px);
-  padding:2.2rem 2rem;
-  background:var(--card-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter:blur(12px);
-  border-radius:24px;
-  box-shadow:0 8px 24px rgba(0,0,0,.12);
-  text-align:center;
-}
+    .container {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      width: min(92vw, 520px);
+      padding: 2.2rem 2rem;
+      background: var(--card-bg);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+      text-align: center;
+    }
 
-h1{
-  margin:0 0 .8rem;
-  font-size:2rem;
-  color:#333;
-}
+    h1 {
+      margin: 0 0 .8rem;
+      font-size: 2rem;
+      color: #333;
+    }
 
-button{
-  width:80%;
-  max-width:260px;
-  padding:.85rem;
-  font-size:1.1rem;
-  font-weight:700;
-  border:none;
-  border-radius:14px;
-  background:var(--accent);
-  color:#fff;
-  cursor:pointer;
-  box-shadow:0 6px 15px rgba(51,153,255,.6);
-}
+    button {
+      width: 80%;
+      max-width: 260px;
+      padding: .85rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, .6);
+    }
 
-button:hover{background:var(--accent-hover)}
+    button:hover {
+      background: var(--accent-hover)
+    }
 
-#cameraSelect{
-  width:80%;
-  max-width:240px;
-  padding:.7rem;
-  font-size:1rem;
-  font-weight:600;
-  border-radius:12px;
-  border:2px solid #ccc;
-}
+    #cameraSelect {
+      width: 80%;
+      max-width: 240px;
+      padding: .7rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      border: 2px solid #ccc;
+    }
 
-#reader{
-  width:100%;
-  max-width:360px;
-}
+    #reader {
+      width: 100%;
+      max-width: 360px;
+    }
 
-#scanResult{
-  display:none;
-  font-size:1.15rem;
-  font-weight:700;
-  word-break:break-all;
-}
+    #scanResult {
+      display: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      word-break: break-all;
+    }
 
-#resetBtn{
-  display:none;
-  background:var(--error);
-  font-size:.95rem;
-  padding:.55rem 1rem;
-}
+    #resetBtn {
+      display: none;
+      background: var(--error);
+      font-size: .95rem;
+      padding: .55rem 1rem;
+    }
 
-#resetBtn:hover{background:#b00}
+    #resetBtn:hover {
+      background: #b00
+    }
 
-input[type=file]{
-  width:80%;
-  max-width:240px;
-  padding:.5rem;
-  font-size:1rem;
-  border-radius:12px;
-  border:1px solid #ccc;
-  cursor:pointer;
-}
+    input[type=file] {
+      width: 80%;
+      max-width: 240px;
+      padding: .5rem;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
 
-footer{
-  font-size:.85rem;
-  color:#555;
-}
+    footer {
+      font-size: .85rem;
+      color: #555;
+    }
 
-a{
-  color:var(--link);
-  text-decoration:none;
-}
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
 
-a:hover{text-decoration:underline}
-</style>
-<style>
-  .upload-instruction { margin-top: 1.5rem; }
-</style>
+    a:hover {
+      text-decoration: underline
+    }
+  </style>
+  <style>
+    .upload-instruction {
+      margin-top: 1.5rem;
+    }
+  </style>
 
 </head>
 
 <body>
-  
+
   <main class="container">
     <h1>QR Code Scanner</h1>
 
@@ -152,7 +164,7 @@ a:hover{text-decoration:underline}
   </main>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
- 
+
   <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
   <script>
@@ -177,7 +189,7 @@ a:hover{text-decoration:underline}
     footer.innerHTML = footerHTML;
   </script>
 
- <script>
+  <script>
     footerHTML += `<p>
       このサービスは
       <a class="link" href="https://unpkg.com/html5-qrcode" target="_blank">html5-qrcode</a> と
