@@ -80,6 +80,27 @@
       transform: scale(0.98);
     }
 
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      width: 80%;
+      max-width: 260px;
+      justify-items: center;
+    }
+
+    .controls button {
+      width: 100%;
+      margin: 0;
+    }
+
+    /* カメラ起動中は2カラムにする */
+    .controls.active {
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 320px;
+    }
+
     button.secondary {
       background-color: #6c757d;
       box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
@@ -192,8 +213,10 @@
       <option value="" disabled selected>カメラを読み込んでいます...</option>
     </select>
 
-    <button id="cameraToggleBtn">カメラ起動</button>
-    <button id="torchBtn">ライト</button>
+    <div id="controls" class="controls">
+      <button id="cameraToggleBtn">カメラ起動</button>
+      <button id="torchBtn">ライト</button>
+    </div>
 
     <div id="reader"></div>
 
@@ -244,6 +267,7 @@
     footer.innerHTML = footerHTML;
 
     const html5QrCode = new Html5Qrcode("reader");
+    const controls = document.getElementById("controls");
     const cameraToggleBtn = document.getElementById("cameraToggleBtn");
     const torchBtn = document.getElementById("torchBtn");
     const cameraSelect = document.getElementById("cameraSelect");
@@ -339,10 +363,11 @@
         isScanning = true;
         cameraToggleBtn.textContent = "カメラ停止";
         cameraToggleBtn.classList.add("secondary");
+        controls.classList.add("active");
         cameraSelect.disabled = false;
 
-        // ライト機能チェック
-        checkTorchCapability();
+        // ライト機能チェック（少し待ってから実行）
+        setTimeout(checkTorchCapability, 500);
 
       } catch (err) {
         console.error(err);
@@ -357,6 +382,7 @@
           isScanning = false;
           cameraToggleBtn.textContent = "カメラ起動";
           cameraToggleBtn.classList.remove("secondary");
+          controls.classList.remove("active");
 
           // ライト状態リセット
           torchBtn.style.display = "none";
@@ -372,7 +398,7 @@
     // ライト機能の確認
     function checkTorchCapability() {
       try {
-        const capabilities = html5QrCode.getRunningTrackCameraCapabilities();
+        const capabilities = html5QrCode.getRunningTrackCapabilities();
         if (capabilities && capabilities.torch) {
           torchBtn.style.display = "inline-block";
         } else {
