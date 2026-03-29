@@ -122,6 +122,14 @@
   </div>
 
   <script>
+    // README/LICENSE へのアクセス（大文字小文字問わず）を判定してリダイレクト
+    (function() {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('readme') || path.includes('license')) {
+        window.location.replace('./');
+      }
+    })();
+
     document.addEventListener('DOMContentLoaded', () => {
       if (location.hostname === 'hamuzon.github.io') {
         document.getElementById('backLink').href = 'https://hamuzon.github.io/QR/';
