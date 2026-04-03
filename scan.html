@@ -190,6 +190,37 @@
       font-size: 0.9rem;
       color: #666;
     }
+    .upload-tools {
+      width: 100%;
+      display: grid;
+      justify-items: center;
+      gap: 0.75rem;
+    }
+    .url-row {
+      width: 80%;
+      max-width: 320px;
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: 1fr;
+    }
+    #imageUrlInput {
+      width: 100%;
+      padding: .7rem .8rem;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--accent);
+      outline: none;
+    }
+    #imageUrlInput:focus {
+      border-color: var(--accent-hover);
+      background-color: #f0f8ff;
+    }
+    .hint {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #666;
+      text-align: center;
+    }
 
     #torchBtn {
       display: none;
@@ -226,7 +257,15 @@
     </div>
 
     <p class="upload-instruction">カメラで読み取れない場合は画像をアップロード:</p>
-    <input type="file" id="fileInput" accept="image/*" aria-label="画像ファイルをアップロード">
+    <div class="upload-tools">
+      <input type="file" id="fileInput" accept="image/*" aria-label="画像ファイルをアップロード">
+      <button id="pasteBtn" class="secondary" type="button">クリップボード画像を読み取り</button>
+      <div class="url-row">
+        <input type="url" id="imageUrlInput" placeholder="画像URLを入力 (https://...)" aria-label="画像URL">
+        <button id="urlScanBtn" class="secondary" type="button">URL画像を読み取り</button>
+      </div>
+      <p class="hint">※ URL画像はCORS設定によって読み取れない場合があります</p>
+    </div>
 
     <footer id="footer-copy"></footer>
   </main>
@@ -275,6 +314,9 @@
     const resultBox = document.getElementById("resultBox");
     const resetBtn = document.getElementById("resetBtn");
     const fileInput = document.getElementById("fileInput");
+    const pasteBtn = document.getElementById("pasteBtn");
+    const imageUrlInput = document.getElementById("imageUrlInput");
+    const urlScanBtn = document.getElementById("urlScanBtn");
 
     let isScanning = false;
     let isTorchOn = false;
@@ -446,6 +488,30 @@
     };
 
     // 画像ファイル読み込み
+    async function decodeImageElement(img) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, img.width, img.height);
+      const code = jsQR(imageData.data, img.width, img.height);
+      showResult(code ? code.data : "QRコードが見つかりません");
+    }
+
+    async function decodeBlob(blob) {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          await decodeImageElement(img);
+        } catch (err) {
+          console.error(err);
+          alert("画像の解析に失敗しました\n\n" + (err?.message ?? String(err)));
+        }
+      };
+      img.src = URL.createObjectURL(blob);
+    }
+
     fileInput.onchange = e => {
       clearResult();
       // カメラが動いていたら止める（リソース節約と競合回避）
@@ -453,25 +519,67 @@
 
       const file = e.target.files[0];
       if (!file) return;
+      decodeBlob(file);
+    };
 
-      const img = new Image();
-      img.onload = () => {
-        try {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          const imageData = ctx.getImageData(0, 0, img.width, img.height);
-          const code = jsQR(imageData.data, img.width, img.height);
-
-          showResult(code ? code.data : "QRコードが見つかりません");
-        } catch (err) {
-          console.error(err);
-          alert("画像の解析に失敗しました\n\n" + (err?.message ?? String(err)));
+    // クリップボード画像読み取り
+    async function readClipboardImage() {
+      clearResult();
+      if (isScanning) stopScanning();
+      try {
+        if (!navigator.clipboard?.read) {
+          throw new Error("このブラウザはクリップボード画像読み取りに対応していません");
         }
-      };
-      img.src = URL.createObjectURL(file);
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const imageType = item.types.find(type => type.startsWith("image/"));
+          if (imageType) {
+            const blob = await item.getType(imageType);
+            await decodeBlob(blob);
+            return;
+          }
+        }
+        showResult("クリップボード内に画像がありません");
+      } catch (err) {
+        console.error(err);
+        alert("クリップボード画像の読み取りに失敗しました。\n権限設定を確認してください。\n\n" + (err?.message ?? String(err)));
+      }
+    }
+
+    pasteBtn.onclick = readClipboardImage;
+
+    // Ctrl/Cmd + V での画像貼り付けにも対応
+    window.addEventListener("paste", async (event) => {
+      const items = event.clipboardData?.items || [];
+      const imageItem = [...items].find(item => item.type.startsWith("image/"));
+      if (!imageItem) return;
+      clearResult();
+      if (isScanning) stopScanning();
+      event.preventDefault();
+      await decodeBlob(imageItem.getAsFile());
+    });
+
+    // URL画像読み込み
+    urlScanBtn.onclick = async () => {
+      clearResult();
+      if (isScanning) stopScanning();
+      const imageUrl = imageUrlInput.value.trim();
+      if (!/^https?:\/\//i.test(imageUrl)) {
+        alert("http:// または https:// の画像URLを入力してください");
+        return;
+      }
+      try {
+        const response = await fetch(imageUrl, { mode: "cors" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const blob = await response.blob();
+        if (!blob.type.startsWith("image/")) {
+          throw new Error("指定URLは画像ではありません");
+        }
+        await decodeBlob(blob);
+      } catch (err) {
+        console.error(err);
+        alert("URL画像の取得または解析に失敗しました。\nCORS制限またはURLの誤りの可能性があります。\n\n" + (err?.message ?? String(err)));
+      }
     };
 
   </script>
