@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image QR Scanner</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <style>
+    :root {
+      --accent: #3399ff;
+      --accent-hover: #1673e6;
+      --error: #d33;
+      --link: #4CAF50;
+      --card-bg: rgba(255, 255, 255, .88);
+      --bg: linear-gradient(180deg, #f9e6e7 0%, #fce8d8 30%, #d9f0e6 70%, #a8d0e6 100%);
+      --font-main: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      font-family: var(--font-main);
+      padding: 1rem;
+    }
+
+    .container {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      width: min(92vw, 520px);
+      padding: 2.2rem 2rem;
+      background: var(--card-bg);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    }
+
+    h1 {
+      margin: 0 0 1.5rem;
+      font-size: 1.8rem;
+      color: #333;
+      text-align: center;
+    }
+
+    button {
+      width: 80%;
+      max-width: 260px;
+      padding: .85rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, .6);
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: var(--accent-hover)
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    #fileInput,
+    #urlInput {
+      width: 80%;
+      max-width: 240px;
+      padding: .8rem;
+      font-size: 1rem;
+      border-radius: 14px;
+      border: 1.5px solid var(--accent);
+      background-color: #fff;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(51, 153, 255, 0.1);
+      transition: border-color 0.3s;
+    }
+
+    #fileInput:focus,
+    #urlInput:focus {
+      border-color: var(--accent-hover);
+      background-color: #f0f8ff;
+    }
+
+    .url-input-container {
+      display: flex;
+      gap: 0.5rem;
+      width: 80%;
+      max-width: 280px;
+      justify-content: center;
+    }
+
+    .url-input-container #urlInput {
+      width: 100%;
+      max-width: none;
+    }
+
+    .url-input-container button {
+      width: auto;
+      padding: 0 1rem;
+      margin: 0;
+    }
+
+    .paste-instruction {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0;
+    }
+
+    #scanResult {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 700;
+      word-break: break-all;
+      color: #333;
+      margin-bottom: 0.5rem;
+      min-height: 1.5rem;
+    }
+
+    #resultBox {
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      display: none;
+    }
+
+    #resetBtn {
+      width: auto;
+      display: inline-block;
+      background: var(--error);
+      box-shadow: 0 4px 10px rgba(221, 51, 51, 0.4);
+      font-size: .95rem;
+      padding: .55rem 1rem;
+      margin-top: 0.5rem;
+    }
+
+    #resetBtn:hover {
+      background: #b00
+    }
+
+    footer {
+      font-size: .85rem;
+      color: #555;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+
+    .upload-instruction {
+      margin: 1rem 0 0.5rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+    <h1>Image QR Scanner</h1>
+
+    <div id="resultBox">
+      <div id="scanResult"></div>
+      <button id="resetBtn">閉じる</button>
+    </div>
+
+    <p class="upload-instruction">画像からQRコードを読み取る:</p>
+    <input type="file" id="fileInput" accept="image/*" aria-label="画像ファイルをアップロード">
+
+    <div class="url-input-container">
+      <input type="text" id="urlInput" placeholder="画像URLを入力" aria-label="画像URLから読み込み">
+      <button id="urlScanBtn">読込</button>
+    </div>
+
+    <p class="paste-instruction">または、この画面に画像をペースト (Ctrl+V)</p>
+
+    <footer id="footer-copy"></footer>
+  </main>
+
+  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+
+  <script>
+    // --- 1. フッターの設定 ---
+    const footer = document.getElementById("footer-copy");
+    const baseYear = 2025;
+    const currentYear = new Date().getFullYear();
+    const yearStr = currentYear > baseYear ? `${baseYear}–${currentYear}` : `${baseYear}`;
+    
+    // ホスト名に応じた作者リンクの生成
+    const host = location.hostname;
+    let authorLink = "";
+
+    if (host.includes("hamuzon.github.io") || host.includes("hamuzon-jp.f5.si")) {
+      const url = host.includes("hamuzon-jp") ? "https://hamuzon-jp.f5.si" : "https://hamuzon.github.io";
+      authorLink = `<a class="link" href="${url}" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+    } 
+    else if (host.includes("hamusata.f5.si") || host.includes("qr.link-s.f5.si")) {
+      authorLink = `<a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+    }
+
+    const copyright = authorLink 
+      ? `&copy; ${yearStr} ${authorLink}` 
+      : `&copy; ${yearStr} Image QR Scanner`;
+
+    // テンプレートリテラルで多段＆段差をつけて見やすく整理
+    footer.innerHTML = `
+      ${copyright}
+      <p>
+        このサービスは
+        <a class="link" href="https://unpkg.com/jsqr/dist/jsQR.js" target="_blank">jsQR</a>
+        を使用しています。
+      </p>
+    `;
+
+    // --- 2. 各要素の取得 ---
+    const scanResult = document.getElementById("scanResult");
+    const resultBox = document.getElementById("resultBox");
+    const resetBtn = document.getElementById("resetBtn");
+    const fileInput = document.getElementById("fileInput");
+    const urlInput = document.getElementById("urlInput");
+    const urlScanBtn = document.getElementById("urlScanBtn");
+
+    const isURL = (str) => /^https?:\/\//i.test(str);
+
+    // 結果の表示処理
+    function showResult(text) {
+      if (isURL(text)) {
+        scanResult.innerHTML = `
+          <a class="link" href="${text}" target="_blank">
+            ${text}
+          </a>
+        `;
+      } else {
+        scanResult.innerText = text; // XSS対策
+      }
+      resultBox.style.display = "block";
+    }
+
+    // 結果のクリア
+    function clearResult() {
+      scanResult.textContent = "";
+      resultBox.style.display = "none";
+    }
+    resetBtn.onclick = clearResult;
+
+    // --- 3. QRコードの解析処理 ---
+    function scanImageElement(img) {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        const code = jsQR(imageData.data, img.width, img.height);
+
+        showResult(code ? code.data : "QRコードが見つかりません");
+        
+      } catch (err) {
+        console.error(err);
+        
+        let errorHint = "";
+        if (err.name === "SecurityError") {
+          errorHint = "  ・CORS制限によるCanvas汚染\n" + 
+                      "    (外部ドメインの画像を解析する権限がありませんでした)";
+        } else {
+          errorHint = "  " + (err?.message ?? String(err));
+        }
+
+        // 解析エラー内容をより細かく表示
+        alert(
+          "画像の解析に失敗しました。\n\n" +
+          "【具体的な原因・詳細】\n" +
+          errorHint
+        );
+      }
+    }
+
+    // --- 4. 画像読み込みのアクション ---
+
+    // ① ファイルアップロード
+    fileInput.onchange = (e) => {
+      clearResult();
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const img = new Image();
+      img.onload = () => scanImageElement(img);
+      img.src = URL.createObjectURL(file);
+    };
+
+    // ② URLから読み込み
+    urlScanBtn.onclick = () => {
+      let pathOrUrl = urlInput.value.trim();
+      if (!pathOrUrl) return;
+
+      clearResult();
+
+      const img = new Image();
+      
+      // HTTP/HTTPSの場合のみCORS回避を使用する
+      if (pathOrUrl.startsWith("http")) {
+        img.crossOrigin = "Anonymous";
+      }
+      
+      img.onload = () => scanImageElement(img);
+      img.onerror = (e) => {
+        let reason = "";
+
+        // 状況ごとに可能な限り細かいエラー要因を特定
+        if (!navigator.onLine) {
+          reason = "  ・端末がオフライン(インターネット未接続)です\n";
+        } else if (pathOrUrl.startsWith("http:") && location.protocol === "https:") {
+          reason = "  ・Mixed Content ブロック\n" +
+                   "    (HTTPS環境からは、HTTPの画像URLを読み込めません)\n";
+        } else if (pathOrUrl.startsWith("http")) {
+          reason = "  ・CORS(跨域リクエスト)制限によってブロックされた\n" +
+                   "  ・サーバー上に画像が存在しない(404 Not Found など)\n" +
+                   "  ・サポートされていない画像形式\n";
+        } else {
+          reason = "  ・URLが間違っている、または存在しない\n" +
+                   "  ・画像として読み込めないデータ\n";
+        }
+
+        const errDetail = e?.type ? ` (イベント: ${e.type})` : "";
+
+        // 読み込みエラー理由を箇条書きで多段に表示
+        alert(
+          `画像の読み込みに失敗しました。${errDetail}\n\n` +
+          "【考えられる具体的な原因】\n" +
+          reason + "\n" +
+          "【対象パス】\n" +
+          "  " + pathOrUrl
+        );
+      };
+      
+      img.src = pathOrUrl;
+    };
+
+    // ③ クリップボードからのペースト
+    document.addEventListener("paste", (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const blob = item.getAsFile();
+          
+          if (blob) {
+            clearResult();
+            const img = new Image();
+            img.onload = () => scanImageElement(img);
+            img.src = URL.createObjectURL(blob);
+            break; // 最初の画像だけを処理
+          }
+        }
+      }
+    });
+
+  </script>
+
+</body>
+
+</html>
