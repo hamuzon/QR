@@ -184,16 +184,12 @@ footer a:hover {
     </div>
 
     <footer id="footer-copy">
-      <!-- JSにて動的にコピーライトが挿入されます -->
     </footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
-    /**
-     * フッター設定
-     * コピーライトと作者リンクを多段で見やすく生成します
-     */
+
     (() => {
       const footer = document.getElementById("footer-copy");
       if (!footer) return;
