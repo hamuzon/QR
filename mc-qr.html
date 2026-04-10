@@ -8,221 +8,311 @@
 <link rel="icon" href="https://hamusata.f5.si/icon.png" type="image/png">
 <style>
 :root {
-  --color-accent:#339933;
-  --color-accent-light:#55cc55;
-  --bg-gradient: linear-gradient(180deg,#d9f0e6 0%,#a8d0e6 100%);
-  --mc-black:#1D1D21;
-  --mc-white:#F9FFFE;
-  --font-main:'Inter',sans-serif;
+  --color-accent: #339933;
+  --color-accent-light: #55cc55;
+  --bg-gradient: linear-gradient(180deg, #d9f0e6 0%, #a8d0e6 100%);
+  --mc-black: #1D1D21;
+  --mc-white: #F9FFFE;
+  --font-main: 'Inter', sans-serif;
 }
-* { box-sizing:border-box; }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  margin:0;
+  margin: 0;
   font-family: var(--font-main);
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  min-height:100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
   background: var(--bg-gradient);
-  padding:1rem;
-  color:#333;
+  padding: 1rem;
+  color: #333;
 }
+
 main.container {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border-radius:1.5rem;
-  width:100%;
-  max-width:640px;
-  padding:2rem;
-  text-align:center;
-  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 640px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
-h1 { font-size:1.8rem; margin-bottom:1rem; }
-input[type="text"], input[type="number"] {
-  padding:0.5rem;
-  font-size:0.95rem;
-  border:2px solid var(--color-accent);
-  border-radius:10px;
-  outline:none;
-  text-align:center;
-  transition:0.3s;
-  margin:0.2rem;
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
 }
-input:focus { border-color: var(--color-accent-light); }
+
+input[type="text"],
+input[type="number"] {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  border: 2px solid var(--color-accent);
+  border-radius: 10px;
+  outline: none;
+  text-align: center;
+  transition: 0.3s;
+  margin: 0.2rem;
+}
+
+input:focus {
+  border-color: var(--color-accent-light);
+}
+
 .settings-group {
-  margin-top:0.5rem;
+  margin-top: 0.5rem;
 }
-#maxSize { width: 60px; }
+
+#maxSize {
+  width: 60px;
+}
 
 #buttonGroup {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin:0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0.5rem 0;
 }
+
 button {
-  flex:1;
-  padding:0.5rem 0.8rem;
-  margin:0.2rem;
-  border:none;
-  border-radius:12px;
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  margin: 0.2rem;
+  border: none;
+  border-radius: 12px;
   background: var(--color-accent);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.3s;
-  min-width:100px;
-  font-size:0.9rem;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  min-width: 100px;
+  font-size: 0.9rem;
 }
-button:hover { background: var(--color-accent-light); }
+
+button:hover {
+  background: var(--color-accent-light);
+}
+
 #blockqr {
-  margin-top:1rem;
-  max-width:100%;
+  margin-top: 1rem;
+  max-width: 100%;
   image-rendering: pixelated;
-  border:2px solid #555;
+  border: 2px solid #555;
 }
+
 .guide-info {
-  font-size:0.75rem;
-  margin-top:0.5rem;
-  text-align:left;
-  color:#555;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  text-align: left;
+  color: #555;
 }
-.guide-info a { color: #339933; text-decoration:none; }
-.guide-info a:hover { text-decoration:underline; }
+
+.guide-info a {
+  color: #339933;
+  text-decoration: none;
+}
+
+.guide-info a:hover {
+  text-decoration: underline;
+}
+
 footer {
-  margin-top:1.5rem;
-  font-size:0.7rem;
-  color:#666;
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  color: #666;
 }
-footer a{ color:#339933; text-decoration:none; }
-footer a:hover{text-decoration:underline;}
-@media(max-width:480px){
-  #buttonGroup{flex-direction:column;}
-  button{width:100%;}
-  input[type="text"], input[type="number"]{width:100%;}
+
+footer a {
+  color: #339933;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  #buttonGroup {
+    flex-direction: column;
+  }
+  button {
+    width: 100%;
+  }
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+  }
 }
 </style>
 </head>
 <body>
-<main class="container">
-<h1>Minecraft QR Generator / マイクラQRジェネレーター</h1>
-<input type="text" id="inputText" placeholder="URL or Text / URL またはテキスト">
-<div class="settings-group">
-<label>最大ブロック数 / Max Blocks: <input type="number" id="maxSize" value="64" min="1" max="128"></label>
-</div>
-<div id="buttonGroup">
-<button onclick="generateMCQR()">Generate QR / 生成</button>
-<button onclick="downloadMCQR()">Download PNG / 保存</button>
-</div>
-<canvas id="blockqr"></canvas>
-<div class="guide-info" id="guide">
-<p>※本サービスはMinecraftとは関係ありません。 / Not affiliated with Minecraft.</p>
-<p>※生成されるQRコードの正確性は保証されません。自己責任でご利用ください。 / Accuracy of QR code not guaranteed. Use at your own risk.</p>
-<p>※このサービスは<a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a>ライブラリを使用しています。 / Uses QRCode.js library.</p>
-</div>
-<footer id="footer-copy"><span id="year"></span></footer>
-</main>
+  <main class="container">
+    <h1>Minecraft QR Generator / マイクラQRジェネレーター</h1>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-<script>
-// 年表示
-document.getElementById("year").textContent = new Date().getFullYear();
+    <input type="text" id="inputText" placeholder="URL or Text / URL またはテキスト">
 
-// フッター設定
-const baseYear = 2025;
-const currentYear = new Date().getFullYear();
-const hostname = location.hostname;
-const footer = document.getElementById("footer-copy");
-const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
-let footerHTML = "";
+    <div class="settings-group">
+      <label>
+        最大ブロック数 / Max Blocks: 
+        <input type="number" id="maxSize" value="64" min="1" max="128">
+      </label>
+    </div>
 
-if (hostname === "hamuzon.github.io") {
-  footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-} else if (hostname.includes("hamuzon-jp.f5.si")) {
-  footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-} else if (hostname.includes("hamusata.f5.si")) {
-  footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-} else if (hostname.includes("qr.link-s.f5.si")) {
-  footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-} else if (hostname.includes("hamusata.f5.si")) {
-  footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-} else {
-  footerHTML = `&copy; ${yearString} Minecraft QR Generator`;
-}
-footer.innerHTML = footerHTML;
+    <div id="buttonGroup">
+      <button onclick="generateMCQR()">Generate QR / 生成</button>
+      <button onclick="downloadMCQR()">Download PNG / 保存</button>
+    </div>
 
-let lastText = "";
+    <canvas id="blockqr"></canvas>
 
-async function generateMCQR(){
-  let text = document.getElementById("inputText").value.trim();
-  if(!text){ alert("⚠️ 入力が空です / Input is empty"); return; }
-  lastText = text;
+    <div class="guide-info" id="guide">
+      <p>※本サービスはMinecraftとは関係ありません。 / Not affiliated with Minecraft.</p>
+      <p>
+        ※生成されるQRコードの正確性は保証されません。自己責任でご利用ください。 / 
+        Accuracy of QR code not guaranteed. Use at your own risk.
+      </p>
+      <p>
+        ※このサービスは<a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a>ライブラリを使用しています。 / 
+        Uses QRCode.js library.
+      </p>
+    </div>
 
-  let MAX_BLOCKS = parseInt(document.getElementById("maxSize").value)||64;
-  if(MAX_BLOCKS<1) MAX_BLOCKS=1;
-  
-  const tempCanvas = document.createElement("canvas");
-  try {
-    await QRCode.toCanvas(tempCanvas, text, { width: 0, margin: 1 });
-  } catch (err) {
-    console.error(err);
-    alert(
-      "QRコードの生成に失敗しました\n\n" +
-      "エラー内容:\n" +
-      (err?.message ?? String(err))
-    );
-    return;
-  }
+    <footer id="footer-copy">
+      <!-- JSにて動的にコピーライトが挿入されます -->
+    </footer>
+  </main>
 
-  const origX = tempCanvas.width;
-  const origY = tempCanvas.height;
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script>
+    /**
+     * フッター設定
+     * コピーライトと作者リンクを多段で見やすく生成します
+     */
+    (() => {
+      const footer = document.getElementById("footer-copy");
+      if (!footer) return;
 
-  const scale = Math.min(MAX_BLOCKS/origX, MAX_BLOCKS/origY,1);
-  const newWidth = Math.ceil(origX*scale);
-  const newHeight = Math.ceil(origY*scale);
+      const baseYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const host = location.hostname;
+      const yearStr = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
 
-  const ctxTemp=tempCanvas.getContext("2d");
-  const imgData=ctxTemp.getImageData(0,0,tempCanvas.width,tempCanvas.height).data;
+      let authorLink = "";
 
-  const blockCanvas=document.getElementById("blockqr");
-  const cellSize=Math.floor(Math.min(blockCanvas.parentElement.clientWidth*0.95/newWidth,32));
-  blockCanvas.width=newWidth*cellSize;
-  blockCanvas.height=newHeight*cellSize;
-  const ctx=blockCanvas.getContext("2d");
+      // リンク先を判定
+      if (host.includes("hamuzon.github.io") || host.includes("hamuzon-jp.f5.si")) {
+        authorLink = `<a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (host.includes("hamusata.f5.si") || host.includes("qr.link-s.f5.si")) {
+        authorLink = `<a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      }
 
-  for(let y=0;y<newHeight;y++){
-    for(let x=0;x<newWidth;x++){
-      const origXPos=Math.floor(x/scale);
-      const origYPos=Math.floor(y/scale);
-      const i=(origYPos*tempCanvas.width+origXPos)*4;
-      const brightness=(imgData[i]+imgData[i+1]+imgData[i+2])/3;
-      ctx.fillStyle = brightness<128? '#1D1D21' : '#F9FFFE';
-      ctx.fillRect(x*cellSize,y*cellSize,cellSize,cellSize);
-      ctx.strokeStyle="#555";
-      ctx.strokeRect(x*cellSize,y*cellSize,cellSize,cellSize);
+      const copyright = authorLink 
+        ? `&copy; ${yearStr} ${authorLink}` 
+        : `&copy; ${yearStr} Minecraft QR Generator`;
+
+      // 多段・改行ありで見やすく挿入
+      footer.innerHTML = `
+        ${copyright}
+      `;
+    })();
+
+    let lastText = "";
+
+    async function generateMCQR() {
+      let text = document.getElementById("inputText").value.trim();
+      if (!text) {
+        alert("⚠️ 入力が空です / Input is empty");
+        return;
+      }
+      lastText = text;
+
+      let MAX_BLOCKS = parseInt(document.getElementById("maxSize").value) || 64;
+      if (MAX_BLOCKS < 1) {
+        MAX_BLOCKS = 1;
+      }
+
+      const tempCanvas = document.createElement("canvas");
+      try {
+        await QRCode.toCanvas(tempCanvas, text, {
+          width: 0,
+          margin: 1
+        });
+      } catch (err) {
+        console.error(err);
+        alert(
+          "QRコードの生成に失敗しました\n\n" +
+          "エラー内容:\n" +
+          (err?.message ?? String(err))
+        );
+        return;
+      }
+
+      const origX = tempCanvas.width;
+      const origY = tempCanvas.height;
+
+      const scale = Math.min(MAX_BLOCKS / origX, MAX_BLOCKS / origY, 1);
+      const newWidth = Math.ceil(origX * scale);
+      const newHeight = Math.ceil(origY * scale);
+
+      const ctxTemp = tempCanvas.getContext("2d");
+      const imgData = ctxTemp.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
+
+      const blockCanvas = document.getElementById("blockqr");
+      const parentWidth = blockCanvas.parentElement.clientWidth;
+      const cellSize = Math.floor(Math.min(parentWidth * 0.95 / newWidth, 32));
+
+      blockCanvas.width = newWidth * cellSize;
+      blockCanvas.height = newHeight * cellSize;
+      const ctx = blockCanvas.getContext("2d");
+
+      for (let y = 0; y < newHeight; y++) {
+        for (let x = 0; x < newWidth; x++) {
+          const origXPos = Math.floor(x / scale);
+          const origYPos = Math.floor(y / scale);
+          const i = (origYPos * tempCanvas.width + origXPos) * 4;
+          const brightness = (imgData[i] + imgData[i + 1] + imgData[i + 2]) / 3;
+
+          ctx.fillStyle = brightness < 128 ? '#1D1D21' : '#F9FFFE';
+          ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          ctx.strokeStyle = "#555";
+          ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+      }
     }
-  }
-}
 
-function downloadMCQR(){
-  const canvas=document.getElementById("blockqr");
-  if(!canvas.width){alert("QRコードを生成してください / Generate QR first"); return;}
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  const dd = String(now.getDate()).padStart(2,'0');
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mi = String(now.getMinutes()).padStart(2,'0');
-  const ss = String(now.getSeconds()).padStart(2,'0');
-  let fileName = `mc-qr-${yyyy}_${mm}_${dd}_${hh}_${mi}_${ss}`;
-  const link=document.createElement("a");
-  link.download = fileName+".png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-}
+    function downloadMCQR() {
+      const canvas = document.getElementById("blockqr");
+      if (!canvas.width) {
+        alert("QRコードを生成してください / Generate QR first");
+        return;
+      }
 
-window.addEventListener('resize',()=>{ if(lastText){generateMCQR();} });
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+
+      let fileName = `mc-qr-${yyyy}_${mm}_${dd}_${hh}_${mi}_${ss}`;
+      const link = document.createElement("a");
+      link.download = fileName + ".png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    window.addEventListener('resize', () => {
+      if (lastText) {
+        generateMCQR();
+      }
+    });
 </script>
 </body>
 </html>
