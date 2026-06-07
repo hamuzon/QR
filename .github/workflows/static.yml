@@ -33,11 +33,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Remove README and LICENSE from deployment artifact
+      - name: Insert normalization script into HTML files
         run: |
-          # ケース無視で README と LICENSE に関連するファイルを削除
-          find . -maxdepth 1 -iname "readme*" -delete
-          find . -maxdepth 1 -iname "license*" -delete
+          find . -maxdepth 1 -name "*.html" -not -name "google*.html" -exec sed -i '/<head>/a \  <script>if(window.location.hostname.endsWith(".")){window.location.replace(window.location.href.replace(window.location.hostname,window.location.hostname.slice(0,-1)));}</script>' {} +
+        shell: bash
+      - name: Remove sensitive files from deployment artifact
+        run: |
+          rm -f README.md README readme.md license LICENSE LICENSE.txt _redirects.md _redirects
         shell: bash
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
