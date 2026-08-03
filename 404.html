@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -88,7 +89,7 @@
       color: #333;
       -webkit-user-select: none;
       user-select: none;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
     a.link {
@@ -111,6 +112,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="wrapper">
     <h1>404 - error</h1>
@@ -122,8 +124,7 @@
   </div>
 
   <script>
-    // README/LICENSE へのアクセス（大文字小文字問わず）を判定してリダイレクト
-    (function() {
+    (function () {
       const path = window.location.pathname.toLowerCase();
       if (path.includes('readme') || path.includes('license')) {
         window.location.replace('./');
@@ -163,4 +164,5 @@
     })();
   </script>
 </body>
+
 </html>

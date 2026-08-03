@@ -39,7 +39,7 @@ jobs:
         run: |
           node <<'EOF'
           const fs = require('fs');
-          const canonicalDomain = 'qr.hamuzon-jp.f5.si';
+          const canonicalDomain = process.env.CANONICAL_DOMAIN || 'hamuzon.github.io/QR';
           fs.readdirSync('.').forEach(file => {
             if (file.endsWith('.html') && !file.startsWith('google')) {
               let content = fs.readFileSync(file, 'utf8');

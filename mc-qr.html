@@ -1,161 +1,166 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>Minecraft QR Generator</title>
+  <title>Minecraft QR Generator</title>
 
-<meta name="description" content="ブロック風のQRコードを作成できるオンラインツールです。URLやテキストから簡単に生成できます。Minecraftとは関係ありません。 / Create block-style QR codes from URLs or text with this online tool. Not affiliated with Minecraft.">
+  <meta name="description"
+    content="ブロック風のQRコードを作成できるオンラインツールです。URLやテキストから簡単に生成できます。Minecraftとは関係ありません。 / Create block-style QR codes from URLs or text with this online tool. Not affiliated with Minecraft.">
 
-<link rel="icon" href="/icon.svg" type="image/svg+xml">
-<link rel="icon" href="/icon.png" type="image/png">
-  
-<style>
-:root {
-  --color-accent: #339933;
-  --color-accent-light: #55cc55;
-  --bg-gradient: linear-gradient(180deg, #d9f0e6 0%, #a8d0e6 100%);
-  --mc-black: #1D1D21;
-  --mc-white: #F9FFFE;
-  --font-main: 'Inter', sans-serif;
-}
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon.png" type="image/png">
 
-* {
-  box-sizing: border-box;
-}
+  <style>
+    :root {
+      --color-accent: #339933;
+      --color-accent-light: #55cc55;
+      --bg-gradient: linear-gradient(180deg, #d9f0e6 0%, #a8d0e6 100%);
+      --mc-black: #1D1D21;
+      --mc-white: #F9FFFE;
+      --font-main: 'Inter', sans-serif;
+    }
 
-body {
-  margin: 0;
-  font-family: var(--font-main);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  background: var(--bg-gradient);
-  padding: 1rem;
-  color: #333;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-main.container {
-  background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-radius: 1.5rem;
-  width: 100%;
-  max-width: 640px;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
+    body {
+      margin: 0;
+      font-family: var(--font-main);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      padding: 1rem;
+      color: #333;
+    }
 
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-}
+    main.container {
+      background: rgba(255, 255, 255, 0.9);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 640px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
 
-input[type="text"],
-input[type="number"] {
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  border: 2px solid var(--color-accent);
-  border-radius: 10px;
-  outline: none;
-  text-align: center;
-  transition: 0.3s;
-  margin: 0.2rem;
-}
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
 
-input:focus {
-  border-color: var(--color-accent-light);
-}
+    input[type="text"],
+    input[type="number"] {
+      padding: 0.5rem;
+      font-size: 0.95rem;
+      border: 2px solid var(--color-accent);
+      border-radius: 10px;
+      outline: none;
+      text-align: center;
+      transition: 0.3s;
+      margin: 0.2rem;
+    }
 
-.settings-group {
-  margin-top: 0.5rem;
-}
+    input:focus {
+      border-color: var(--color-accent-light);
+    }
 
-#maxSize {
-  width: 60px;
-}
+    .settings-group {
+      margin-top: 0.5rem;
+    }
 
-#buttonGroup {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 0.5rem 0;
-}
+    #maxSize {
+      width: 60px;
+    }
 
-button {
-  flex: 1;
-  padding: 0.5rem 0.8rem;
-  margin: 0.2rem;
-  border: none;
-  border-radius: 12px;
-  background: var(--color-accent);
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  min-width: 100px;
-  font-size: 0.9rem;
-}
+    #buttonGroup {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 0.5rem 0;
+    }
 
-button:hover {
-  background: var(--color-accent-light);
-}
+    button {
+      flex: 1;
+      padding: 0.5rem 0.8rem;
+      margin: 0.2rem;
+      border: none;
+      border-radius: 12px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      min-width: 100px;
+      font-size: 0.9rem;
+    }
 
-#blockqr {
-  margin-top: 1rem;
-  max-width: 100%;
-  image-rendering: pixelated;
-  border: 2px solid #555;
-}
+    button:hover {
+      background: var(--color-accent-light);
+    }
 
-.guide-info {
-  font-size: 0.75rem;
-  margin-top: 0.5rem;
-  text-align: left;
-  color: #555;
-}
+    #blockqr {
+      margin-top: 1rem;
+      max-width: 100%;
+      image-rendering: pixelated;
+      border: 2px solid #555;
+    }
 
-.guide-info a {
-  color: #339933;
-  text-decoration: none;
-}
+    .guide-info {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      text-align: left;
+      color: #555;
+    }
 
-.guide-info a:hover {
-  text-decoration: underline;
-}
+    .guide-info a {
+      color: #339933;
+      text-decoration: none;
+    }
 
-footer {
-  margin-top: 1.5rem;
-  font-size: 0.7rem;
-  color: #666;
-}
+    .guide-info a:hover {
+      text-decoration: underline;
+    }
 
-footer a {
-  color: #339933;
-  text-decoration: none;
-}
+    footer {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: #666;
+    }
 
-footer a:hover {
-  text-decoration: underline;
-}
+    footer a {
+      color: #339933;
+      text-decoration: none;
+    }
 
-@media (max-width: 480px) {
-  #buttonGroup {
-    flex-direction: column;
-  }
-  button {
-    width: 100%;
-  }
-  input[type="text"],
-  input[type="number"] {
-    width: 100%;
-  }
-}
-</style>
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      #buttonGroup {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <main class="container">
     <h1>Minecraft QR Generator / マイクラQRジェネレーター</h1>
@@ -164,7 +169,7 @@ footer a:hover {
 
     <div class="settings-group">
       <label>
-        最大ブロック数 / Max Blocks: 
+        最大ブロック数 / Max Blocks:
         <input type="number" id="maxSize" value="64" min="1" max="128">
       </label>
     </div>
@@ -179,11 +184,12 @@ footer a:hover {
     <div class="guide-info" id="guide">
       <p>※本サービスはMinecraftとは関係ありません。 / Not affiliated with Minecraft.</p>
       <p>
-        ※生成されるQRコードの正確性は保証されません。自己責任でご利用ください。 / 
+        ※生成されるQRコードの正確性は保証されません。自己責任でご利用ください。 /
         Accuracy of QR code not guaranteed. Use at your own risk.
       </p>
       <p>
-        ※このサービスは<a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js</a>ライブラリを使用しています。 / 
+        ※このサービスは<a href="https://github.com/soldair/node-qrcode" target="_blank"
+          rel="noopener noreferrer">QRCode.js</a>ライブラリを使用しています。 /
         Uses QRCode.js library.
       </p>
     </div>
@@ -202,7 +208,7 @@ footer a:hover {
       const baseYear = 2025;
       const currentYear = new Date().getFullYear();
       const host = location.hostname;
-      const yearStr = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+      const yearString = `${baseYear}${currentYear > baseYear ? "~" + currentYear : ""}`;
 
       let authorLink = "";
 
@@ -213,8 +219,8 @@ footer a:hover {
         authorLink = `<a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
       }
 
-      const copyright = authorLink 
-        ? `&copy; ${yearStr} ${authorLink}` 
+      const copyright = authorLink
+        ? `&copy; ${yearStr} ${authorLink}`
         : `&copy; ${yearStr} Minecraft QR Generator`;
 
       // 多段・改行ありで見やすく挿入
@@ -314,6 +320,7 @@ footer a:hover {
         generateMCQR();
       }
     });
-</script>
+  </script>
 </body>
+
 </html>

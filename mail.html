@@ -309,7 +309,7 @@ if (params.has('to')) {
   const baseYear = 2025;
   const currentYear = new Date().getFullYear();
   const hostname = location.hostname;
-  const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+  const yearString = `${baseYear}${currentYear > baseYear ? "~" + currentYear : ""}`;
   let footerHTML = "";
 
   if (hostname === "hamuzon.github.io") {

@@ -244,7 +244,7 @@
     const footer = document.getElementById("footer-copy");
     const baseYear = 2025;
     const currentYear = new Date().getFullYear();
-    const yearString = `${baseYear}${currentYear > baseYear ? "–" + currentYear : ""}`;
+    const yearString = `${baseYear}${currentYear > baseYear ? "~" + currentYear : ""}`;
     const hostname = location.hostname;
     let footerHTML = "";
 
