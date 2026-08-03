@@ -212,7 +212,6 @@
 
       let authorLink = "";
 
-      // リンク先を判定
       if (host.includes("hamuzon.github.io") || host.includes("hamuzon-jp.f5.si")) {
         authorLink = `<a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
       } else if (host.includes("hamusata.f5.si") || host.includes("qr.link-s.f5.si")) {
@@ -220,10 +219,9 @@
       }
 
       const copyright = authorLink
-        ? `&copy; ${yearStr} ${authorLink}`
-        : `&copy; ${yearStr} Minecraft QR Generator`;
+        ? `&copy; ${yearString} ${authorLink}`
+        : `&copy; ${yearString} Minecraft QR Generator`;
 
-      // 多段・改行ありで見やすく挿入
       footer.innerHTML = `
         ${copyright}
       `;
