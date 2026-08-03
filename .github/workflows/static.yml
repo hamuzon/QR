@@ -35,10 +35,26 @@ jobs:
           ref: 'main'
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Inject FQDN normalization script
+      - name: Inject Canonical Tag and FQDN script
         run: |
-          # 全てのHTMLファイルの<head>直後に挿入
-          find . -maxdepth 1 -name "*.html" -not -name "google*.html" -exec sed -i '/<head>/a \  <script>if(window.location.hostname.endsWith(".")){window.location.replace(window.location.href.replace(window.location.hostname,window.location.hostname.slice(0,-1)));}</script>' {} +
+          node <<'EOF'
+          const fs = require('fs');
+          const canonicalDomain = 'qr.hamuzon-jp.f5.si';
+          fs.readdirSync('.').forEach(file => {
+            if (file.endsWith('.html') && !file.startsWith('google')) {
+              let content = fs.readFileSync(file, 'utf8');
+              content = content.replace(/<link rel=["']canonical["'][^>]*>/gi, '');
+              const canonicalPath = file === 'index.html' ? '/' : `/${file}`;
+              const canonicalTag = `  <link rel="canonical" href="https://${canonicalDomain}${canonicalPath}" />`;
+              const fqdnScript = `  <script>if(window.location.hostname.endsWith(".")){window.location.replace(window.location.href.replace(window.location.hostname,window.location.hostname.slice(0,-1)));}</script>`;
+              if (content.includes('<head>')) {
+                content = content.replace('<head>', `<head>\n${canonicalTag}\n${fqdnScript}`);
+                fs.writeFileSync(file, content, 'utf8');
+                console.log(`Injected into ${file}`);
+              }
+            }
+          });
+          EOF
       - name: Remove sensitive files from deployment artifact
         run: |
           # デプロイ対象から削除
