@@ -11,9 +11,6 @@ export async function onRequest(context) {
   if (url.hostname === "hamuzon-jp.f5.si") {
     url.hostname = "qr.hamuzon-jp.f5.si";
     redirected = true;
-  } else if (url.hostname === "hamusata.f5.si" || url.hostname === "qr.link-s.f5.si") {
-    url.hostname = "qr.hamusata.f5.si";
-    redirected = true;
   }
 
   if (redirected) {
