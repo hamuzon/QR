@@ -221,9 +221,13 @@
       </div>
       <select id="wifiEncrypt">
         <option value="WPA" selected>WPA/WPA2</option>
+        <option value="WPA3">WPA3</option>
         <option value="WEP">WEP</option>
         <option value="nopass">なし</option>
       </select>
+      <label>
+        <input type="checkbox" id="wifiHidden"> 非公開 SSID
+      </label>
       <p>⚠️ このWi-Fi QRコード生成機能は自己責任で使用してください。接続トラブルやセキュリティ上の問題が発生しても当方は一切責任を負いません。</p>
     </div>
 
@@ -322,8 +326,10 @@
           const ssid = document.getElementById('wifiSSID').value.trim();
           const pass = document.getElementById('wifiPassword').value.trim();
           const enc = document.getElementById('wifiEncrypt').value;
+          const hidden = document.getElementById('wifiHidden').checked;
           if (!ssid) { alert('SSIDを入力してください'); return ''; }
-          return `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+          const escapeWifiValue = value => value.replace(/([\\;,:])/g, '\\$1');
+          return `WIFI:T:${enc};S:${escapeWifiValue(ssid)};P:${escapeWifiValue(pass)};H:${hidden ? 'true' : 'false'};;`;
         default: return value;
       }
     }
@@ -379,7 +385,8 @@
           const wifiData = {
             ssid: document.getElementById('wifiSSID').value.trim(),
             password: document.getElementById('wifiPassword').value.trim(),
-            encrypt: document.getElementById('wifiEncrypt').value
+            encrypt: document.getElementById('wifiEncrypt').value,
+            hidden: document.getElementById('wifiHidden').checked
           };
           param = `?wifi=${encodeURIComponent(JSON.stringify(wifiData))}`;
           break;
@@ -411,6 +418,7 @@
               document.getElementById('wifiSSID').value = wifiParams.ssid || '';
               document.getElementById('wifiPassword').value = wifiParams.password || '';
               document.getElementById('wifiEncrypt').value = wifiParams.encrypt || 'WPA';
+              document.getElementById('wifiHidden').checked = wifiParams.hidden === true;
             } catch (e) { /* JSONパースエラー時は無視 */ }
           } else {
             input.value = decodeURIComponent(val);
