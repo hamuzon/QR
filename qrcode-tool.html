@@ -244,6 +244,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
+    const VALID_MODES = ['texturl', 'email', 'tel', 'wifi'];
     const modeButtons = document.querySelectorAll('.mode-selector button');
     const input = document.getElementById('inputText');
     const wifiInputs = document.getElementById('wifiInputs');
@@ -252,33 +253,54 @@
     const shareBtn = document.getElementById('shareBtn');
     let currentMode = 'texturl';
 
+    function applyModeUI(mode) {
+      switch (mode) {
+        case 'texturl':
+          input.placeholder = 'テキストまたはURLを入力';
+          input.style.display = 'block';
+          wifiInputs.style.display = 'none';
+          break;
+        case 'email':
+          input.placeholder = 'example@gmail.com';
+          input.style.display = 'block';
+          wifiInputs.style.display = 'none';
+          break;
+        case 'tel':
+          input.placeholder = '09012345678';
+          input.style.display = 'block';
+          wifiInputs.style.display = 'none';
+          break;
+        case 'wifi':
+          input.style.display = 'none';
+          wifiInputs.style.display = 'flex';
+          break;
+      }
+    }
+
+    function switchMode(mode) {
+      if (!VALID_MODES.includes(mode)) {
+        mode = 'texturl';
+      }
+      currentMode = mode;
+      modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+      applyModeUI(mode);
+      updateURLMode(mode);
+    }
+
+    function updateURLMode(mode) {
+      const url = new URL(location.href);
+      if (mode === 'texturl') {
+        url.search = '';
+      } else {
+        url.search = '';
+        url.searchParams.set('Mode', mode);
+      }
+      history.replaceState(null, '', url.toString());
+    }
+
     modeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        modeButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentMode = btn.dataset.mode;
-
-        switch (currentMode) {
-          case 'texturl':
-            input.placeholder = 'テキストまたはURLを入力';
-            input.style.display = 'block';
-            wifiInputs.style.display = 'none';
-            break;
-          case 'email':
-            input.placeholder = 'example@gmail.com';
-            input.style.display = 'block';
-            wifiInputs.style.display = 'none';
-            break;
-          case 'tel':
-            input.placeholder = '09012345678';
-            input.style.display = 'block';
-            wifiInputs.style.display = 'none';
-            break;
-          case 'wifi':
-            input.style.display = 'none';
-            wifiInputs.style.display = 'flex';
-            break;
-        }
+        switchMode(btn.dataset.mode);
       });
     });
 
@@ -372,28 +394,48 @@
       });
     });
 
-    // URLパラメータ対応
-    const params = new URLSearchParams(location.search);
-    for (const [key, val] of params.entries()) {
-      if (['texturl', 'email', 'tel', 'wifi'].includes(key)) {
-        currentMode = key;
-        modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === key));
-        if (key === 'wifi') {
-          input.style.display = 'none';
-          wifiInputs.style.display = 'flex';
-          const wifiParams = JSON.parse(decodeURIComponent(val));
-          document.getElementById('wifiSSID').value = wifiParams.ssid || '';
-          document.getElementById('wifiPassword').value = wifiParams.password || '';
-          document.getElementById('wifiEncrypt').value = wifiParams.encrypt || 'WPA';
-        } else {
-          input.value = decodeURIComponent(val);
-          wifiInputs.style.display = 'none';
-          input.style.display = 'block';
+    // URLパラメータ対応（初期化）
+    (function initFromURL() {
+      const params = new URLSearchParams(location.search);
+
+      // 既存の ?email=xxx&tel=xxx 形式のパラメータ（値付き）を優先
+      for (const [key, val] of params.entries()) {
+        if (VALID_MODES.includes(key)) {
+          currentMode = key;
+          modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === key));
+          if (key === 'wifi') {
+            input.style.display = 'none';
+            wifiInputs.style.display = 'flex';
+            try {
+              const wifiParams = JSON.parse(decodeURIComponent(val));
+              document.getElementById('wifiSSID').value = wifiParams.ssid || '';
+              document.getElementById('wifiPassword').value = wifiParams.password || '';
+              document.getElementById('wifiEncrypt').value = wifiParams.encrypt || 'WPA';
+            } catch (e) { /* JSONパースエラー時は無視 */ }
+          } else {
+            input.value = decodeURIComponent(val);
+            wifiInputs.style.display = 'none';
+            input.style.display = 'block';
+          }
+          applyModeUI(key);
+          updateURLMode(key);
+          handleGenerate(true);
+          return;
         }
-        handleGenerate(true);
-        break;
       }
-    }
+
+      // ?Mode=xxx パラメータ対応（モード切替のみ、値なし）
+      const modeParam = params.get('Mode');
+      if (modeParam) {
+        const modeLower = modeParam.toLowerCase();
+        if (VALID_MODES.includes(modeLower)) {
+          switchMode(modeLower);
+        } else {
+          // "normal" や無効なモードは texturl にフォールバックし、?Mode= を除去
+          switchMode('texturl');
+        }
+      }
+    })();
 
     (() => {
       const footer = document.getElementById("footer-copy");
