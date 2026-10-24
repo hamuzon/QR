@@ -1,3 +1,4 @@
+
 # Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
@@ -35,20 +36,37 @@ jobs:
           ref: 'main'
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Inject Canonical Tag and FQDN script
+      - name: Inject Canonical Tag, FQDN script, and Google Analytics
         run: |
           node <<'EOF'
           const fs = require('fs');
           const canonicalDomain = process.env.CANONICAL_DOMAIN || 'hamuzon.github.io/QR';
+          const googleAnalyticsId = 'G-F8HVYVW05H';
+
           fs.readdirSync('.').forEach(file => {
             if (file.endsWith('.html') && !file.startsWith('google')) {
               let content = fs.readFileSync(file, 'utf8');
+
               content = content.replace(/<link rel=["']canonical["'][^>]*>/gi, '');
+
               const canonicalPath = file === 'index.html' ? '/' : `/${file}`;
               const canonicalTag = `  <link rel="canonical" href="https://${canonicalDomain}${canonicalPath}" />`;
               const fqdnScript = `  <script>if(window.location.hostname.endsWith(".")){window.location.replace(window.location.href.replace(window.location.hostname,window.location.hostname.slice(0,-1)));}</script>`;
+              const googleAnalytics = `  <script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}"></script>
+          <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag("js", new Date());
+          gtag("config", "${googleAnalyticsId}");
+          </script>`;
+
               if (content.includes('<head>')) {
-                content = content.replace('<head>', `<head>\n${canonicalTag}\n${fqdnScript}`);
+                if (!content.includes(googleAnalyticsId)) {
+                  content = content.replace('<head>', `<head>\n${canonicalTag}\n${fqdnScript}\n${googleAnalytics}`);
+                } else {
+                  content = content.replace('<head>', `<head>\n${canonicalTag}\n${fqdnScript}`);
+                }
+
                 fs.writeFileSync(file, content, 'utf8');
                 console.log(`Injected into ${file}`);
               }
@@ -67,4 +85,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
