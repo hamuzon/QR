@@ -1,336 +1,327 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>メールQRコードツール – Mail QR Code Tool</title>
+  <title>メールQRコードツール – Mail QR Code Tool</title>
 
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
 
-<style>
-:root {
-  --color-accent: #3399ff;
-  --color-accent-light: #7fbfff;
-  --bg-gradient: linear-gradient(
-    180deg,
-    #fde2e2 0%,
-    #fff1e6 30%,
-    #d0e7f9 70%,
-    #a8d0e6 100%
-  );
-  --link-color: #28a745;
-}
+  <style>
+    :root {
+      --color-accent: #3399ff;
+      --color-accent-light: #7fbfff;
+      --bg-gradient: linear-gradient(180deg,
+          #fde2e2 0%,
+          #fff1e6 30%,
+          #d0e7f9 70%,
+          #a8d0e6 100%);
+      --link-color: #28a745;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: var(--bg-gradient);
-  font-family: 'Inter','Segoe UI','Hiragino Kaku Gothic ProN',Arial,sans-serif;
-  color: #333;
-  padding: 2rem;
-  margin: 0;
-  display: grid;
-  place-items: center;
-}
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg-gradient);
+      font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+      color: #333;
+      padding: 2rem;
+      margin: 0;
+      display: grid;
+      place-items: center;
+    }
 
-main.container {
-  width: 100%;
-  max-width: 520px;
-  padding: 2rem;
-  background: rgba(255,255,255,0.85);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-radius: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
+    main.container {
+      width: 100%;
+      max-width: 520px;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.85);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
 
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 1.5rem;
-}
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+    }
 
-input,
-textarea {
-  width: 100%;
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  border-radius: 14px;
-  border: 1.5px solid var(--color-accent);
-  box-shadow: 0 6px 12px rgba(51,153,255,0.15);
-  outline: none;
-  margin-bottom: 1rem;
-}
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      border-radius: 14px;
+      border: 1.5px solid var(--color-accent);
+      box-shadow: 0 6px 12px rgba(51, 153, 255, 0.15);
+      outline: none;
+      margin-bottom: 1rem;
+    }
 
-textarea {
-  resize: vertical;
-}
+    textarea {
+      resize: vertical;
+    }
 
-input:focus,
-textarea:focus {
-  background-color: #f0f8ff;
-  border-color: #1673e6;
-}
+    input:focus,
+    textarea:focus {
+      background-color: #f0f8ff;
+      border-color: #1673e6;
+    }
 
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
 
-button.action {
-  flex: 1;
-  padding: 0.85rem;
-  font-size: 1.15rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 14px;
-  background-color: var(--color-accent);
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 6px 15px rgba(51,153,255,0.7);
-  transition: background-color 0.3s;
-}
+    button.action {
+      flex: 1;
+      padding: 0.85rem;
+      font-size: 1.15rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--color-accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(51, 153, 255, 0.7);
+      transition: background-color 0.3s;
+    }
 
-button.action:hover {
-  background-color: #1673e6;
-}
+    button.action:hover {
+      background-color: #1673e6;
+    }
 
-#downloadBtn,
-#shareBtn {
-  display: none;
-}
+    #downloadBtn,
+    #shareBtn {
+      display: none;
+    }
 
-#qrcode {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-}
+    #qrcode {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+    }
 
-#qrcode canvas {
-  max-width: 100%;
-  height: auto !important;
-}
+    #qrcode canvas {
+      max-width: 100%;
+      height: auto !important;
+    }
 
-footer {
-  margin-top: 2.5rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-footer a, footer a:visited {
-  color: var(--link-color);
-  text-decoration: none;
-}
+    footer a,
+    footer a:visited {
+      color: var(--link-color);
+      text-decoration: none;
+    }
 
-footer a:hover {
-  text-decoration: underline;
-}
-  
-@media (max-width: 480px) {
-  body {
-    padding: 1rem;
-  }
-  main.container {
-    padding: 1.5rem;
-  }
-  h1 {
-    font-size: 1.8rem;
-  }
-  .actions {
-    flex-direction: column;
-  }
-}
+    footer a:hover {
+      text-decoration: underline;
+    }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      main.container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 </head>
 
 <body>
 
-<main class="container">
+  <main class="container">
 
-<h1>📧 メールQRコード作成</h1>
+    <h1>📧 メールQRコード作成</h1>
 
-<input
-  type="text"
-  id="mailTo"
-  placeholder="宛先メールアドレス"
-  autocomplete="off"
->
+    <input type="text" id="mailTo" placeholder="宛先メールアドレス" autocomplete="off">
 
-<input
-  type="text"
-  id="mailSubject"
-  placeholder="件名"
->
+    <input type="text" id="mailSubject" placeholder="件名">
 
-<textarea
-  id="mailBody"
-  rows="4"
-  placeholder="本文"
-></textarea>
+    <textarea id="mailBody" rows="4" placeholder="本文"></textarea>
 
-<div class="actions">
-  <button class="action" onclick="generateQR()">QR作成</button>
-  <button class="action" id="downloadBtn" onclick="downloadQR()">QR保存</button>
-  <button class="action" id="shareBtn" onclick="shareURL()">URL共有</button>
-</div>
+    <div class="actions">
+      <button class="action" onclick="generateQR()">QR作成</button>
+      <button class="action" id="downloadBtn" onclick="downloadQR()">QR保存</button>
+      <button class="action" id="shareBtn" onclick="shareURL()">URL共有</button>
+    </div>
 
-<div id="qrcode"></div>
+    <div id="qrcode"></div>
 
-<footer id="footer-copy">
-  <p>
-    このサービスは
-    <a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">
-      QRCode.js
-    </a>
-    を使用しています。
-  </p>
-  <p>
-    本ツールで生成したQRコードの利用によって生じたいかなる損害やトラブルについても、
-    当方は一切責任を負いません。
-  </p>
-</footer>
+    <footer id="footer-copy">
+      <p>
+        このサービスは
+        <a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">
+          QRCode.js
+        </a>
+        を使用しています。
+      </p>
+      <p>
+        本ツールで生成したQRコードの利用によって生じたいかなる損害やトラブルについても、
+        当方は一切責任を負いません。
+      </p>
+    </footer>
 
-</main>
+  </main>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 
-<script>
-function generateQR(auto = false) {
+  <script>
+    function generateQR(auto = false) {
 
-  const to = document.getElementById('mailTo').value.trim()
-  const subject = encodeURIComponent(document.getElementById('mailSubject').value.trim())
-  const body = encodeURIComponent(document.getElementById('mailBody').value.trim())
+      const to = document.getElementById('mailTo').value.trim()
+      const subject = encodeURIComponent(document.getElementById('mailSubject').value.trim())
+      const body = encodeURIComponent(document.getElementById('mailBody').value.trim())
 
-  if (!to) {
-    if (!auto) alert('宛先メールアドレスを入力してください')
-    return
-  }
+      if (!to) {
+        if (!auto) alert('宛先メールアドレスを入力してください')
+        return
+      }
 
-  const data = `mailto:${to}?subject=${subject}&body=${body}`
+      const data = `mailto:${to}?subject=${subject}&body=${body}`
 
-  const qr = document.getElementById('qrcode')
-  qr.innerHTML = ''
-    
-  
-  QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
-    if (err) {
-      console.error(err);
-      alert(
-        "QRコードの生成に失敗しました\n\n" +
-        "エラー内容:\n" +
-        (err.message ?? String(err))
-      );
-      return;
+      const qr = document.getElementById('qrcode')
+      qr.innerHTML = ''
+
+
+      QRCode.toCanvas(data, { width: 256 }, (err, canvas) => {
+        if (err) {
+          console.error(err);
+          alert(
+            "QRコードの生成に失敗しました\n\n" +
+            "エラー内容:\n" +
+            (err.message ?? String(err))
+          );
+          return;
+        }
+
+        qr.appendChild(canvas);
+        downloadBtn.style.display = "inline-block";
+        shareBtn.style.display = "inline-block";
+      });
     }
 
-  qr.appendChild(canvas);
-  downloadBtn.style.display = "inline-block";
-  shareBtn.style.display = "inline-block";
-});
-}
 
+    function downloadQR() {
 
-function downloadQR() {
+      const canvas = document.querySelector('#qrcode canvas')
+      if (!canvas) return
 
-  const canvas = document.querySelector('#qrcode canvas')
-  if (!canvas) return
+      const now = new Date()
+      const name =
+        'MAIL_QR_' +
+        now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') +
+        '_' +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0') +
+        '.png'
 
-  const now = new Date()
-  const name =
-    'MAIL_QR_' +
-    now.getFullYear() +
-    String(now.getMonth() + 1).padStart(2, '0') +
-    String(now.getDate()).padStart(2, '0') +
-    '_' +
-    String(now.getHours()).padStart(2, '0') +
-    String(now.getMinutes()).padStart(2, '0') +
-    '.png'
+      const a = document.createElement('a')
+      a.download = name
+      a.href = canvas.toDataURL('image/png')
+      a.click()
+    }
 
-  const a = document.createElement('a')
-  a.download = name
-  a.href = canvas.toDataURL('image/png')
-  a.click()
-}
+    function shareURL() {
 
-function shareURL() {
+      const params = new URLSearchParams({
+        to: mailTo.value,
+        subject: mailSubject.value,
+        body: mailBody.value
+      })
 
-  const params = new URLSearchParams({
-    to: mailTo.value,
-    subject: mailSubject.value,
-    body: mailBody.value
-  })
+      const url = location.origin + location.pathname + '?' + params.toString()
 
-  const url = location.origin + location.pathname + '?' + params.toString()
+      navigator.clipboard.writeText(url).then(() => {
+        alert('URLをコピーしました')
+      })
+    }
 
-  navigator.clipboard.writeText(url).then(() => {
-    alert('URLをコピーしました')
-  })
-}
+    const params = new URLSearchParams(location.search)
 
-const params = new URLSearchParams(location.search)
+    if (params.has('to')) {
+      mailTo.value = params.get('to') || ''
+      mailSubject.value = params.get('subject') || ''
+      mailBody.value = params.get('body') || ''
+      generateQR(true)
+    }
 
-if (params.has('to')) {
-  mailTo.value = params.get('to') || ''
-  mailSubject.value = params.get('subject') || ''
-  mailBody.value = params.get('body') || ''
-  generateQR(true)
-}
+    (() => {
+      const footer = document.getElementById("footer-copy");
+      if (!footer) {
+        return;
+      }
 
-(() => {
-  const footer = document.getElementById("footer-copy");
-  if (!footer) {
-    return;
-  }
+      const baseYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const hostname = location.hostname;
+      const yearString = `${baseYear}${currentYear > baseYear ? "~" + currentYear : ""}`;
+      let footerHTML = "";
 
-  const baseYear = 2025;
-  const currentYear = new Date().getFullYear();
-  const hostname = location.hostname;
-  const yearString = `${baseYear}${currentYear > baseYear ? "~" + currentYear : ""}`;
-  let footerHTML = "";
+      if (hostname === "hamuzon.github.io") {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamuzon-jp.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
+      } else if (hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else if (hostname.includes("qr.link-s.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else if (hostname.includes("hamusata.f5.si")) {
+        footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
+      } else {
+        footerHTML = `&copy; ${yearString} Mail QR Code Tool`;
+      }
 
-  if (hostname === "hamuzon.github.io") {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon.github.io" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-  } else if (hostname.includes("hamuzon-jp.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamuzon-jp.f5.si" target="_blank" rel="noopener noreferrer">@hamuzon</a>`;
-  } else if (hostname.includes("hamusata.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else if (hostname.includes("qr.link-s.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else if (hostname.includes("hamusata.f5.si")) {
-    footerHTML = `&copy; ${yearString} <a class="link" href="https://hamusata.f5.si" target="_blank" rel="noopener noreferrer">@hamusata</a>`;
-  } else {
-    footerHTML = `&copy; ${yearString} Mail QR Code Tool`;
-  }
-
-  const copyrightElement = document.createElement("div");
-  copyrightElement.innerHTML = footerHTML;
-  footer.prepend(copyrightElement);
-})()
-</script>
+      const copyrightElement = document.createElement("div");
+      copyrightElement.innerHTML = footerHTML;
+      footer.prepend(copyrightElement);
+    })()
+  </script>
 
 </body>
+
 </html>

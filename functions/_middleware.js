@@ -3,7 +3,7 @@ export async function onRequest(context) {
 
   if (url.hostname.endsWith(".")) {
     url.hostname = url.hostname.slice(0, -1);
-    return Response.redirect(url.toString(), 301);
+    return Response.redirect(url.toString(), 308);
   }
 
   let redirected = false;
@@ -14,7 +14,7 @@ export async function onRequest(context) {
   }
 
   if (redirected) {
-    return Response.redirect(url.toString(), 301);
+    return Response.redirect(url.toString(), 308);
   }
 
   const response = await context.next();

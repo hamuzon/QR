@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Code Generator</title>
+  <meta name="description" content="URLを短縮して同時にQRコードを作成・保存できるツール。印刷物やSNSでの共有に便利です。" />
+  <meta name="keywords" content="QRコード 作成, 短縮URL QRコード, URL短縮, QRコード 生成, 短縮URL 作成, short url qr generator" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="QR Code Generator" />
+  <meta property="og:description" content="URLを短縮して同時にQRコードを作成・保存できるツール。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="icon.svg" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <style>
     :root {
@@ -12,9 +21,11 @@
       --color-error: #d33;
       --bg-gradient: linear-gradient(180deg, #87ceeb 0%, #a0d8f7 30%, #c7e9ff 70%, #ffffff 100%);
     }
+
     * {
       box-sizing: border-box;
     }
+
     body {
       background: var(--bg-gradient);
       font-family: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
@@ -25,6 +36,7 @@
       min-height: 100vh;
       margin: 0;
     }
+
     main.container {
       background: rgba(255, 255, 255, 0.85);
       -webkit-backdrop-filter: blur(10px);
@@ -36,11 +48,13 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
+
     h1 {
       font-size: 2.2rem;
       margin-bottom: 1.5rem;
       color: #333;
     }
+
     input[type="text"] {
       width: 90%;
       max-width: 500px;
@@ -52,10 +66,12 @@
       outline: none;
       margin-bottom: 1rem;
     }
+
     input:focus {
       background-color: #f0f8ff;
       border-color: #1673e6;
     }
+
     button {
       padding: 0.85rem;
       font-size: 1.15rem;
@@ -72,9 +88,11 @@
       -webkit-user-select: none;
       user-select: none;
     }
+
     button:hover {
       background-color: #1673e6;
     }
+
     #qrcode {
       margin-top: 2rem;
       display: flex;
@@ -82,9 +100,11 @@
       overflow-wrap: break-word;
       word-break: break-word;
     }
+
     #downloadBtn {
       display: none;
     }
+
     footer {
       margin-top: 3rem;
       font-size: 0.85rem;
@@ -92,18 +112,22 @@
       -webkit-user-select: none;
       user-select: none;
     }
+
     a.link {
       color: #666;
       text-decoration: none;
     }
+
     a.link:hover {
       text-decoration: underline;
     }
+
     @media (max-width: 480px) {
       button {
         width: 100%;
         max-width: none;
       }
+
       input[type="text"] {
         width: 100%;
       }
@@ -111,6 +135,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </head>
+
 <body>
   <main class="container">
     <h1>QR Code Generator</h1>
@@ -122,7 +147,9 @@
     <div id="qrcode"></div>
     <footer>
       <div id="copyright"></div>
-      <p>このサービスは <a href="https://go.link-s.f5.si" target="_blank" rel="noopener noreferrer">go.Link-s.f5.si API</a> と <a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js ライブラリ</a>を使用しています。</p>
+      <p>このサービスは <a href="https://go.link-s.f5.si" target="_blank" rel="noopener noreferrer">go.Link-s.f5.si API</a> と
+        <a href="https://github.com/soldair/node-qrcode" target="_blank" rel="noopener noreferrer">QRCode.js
+          ライブラリ</a>を使用しています。</p>
     </footer>
   </main>
 
@@ -236,4 +263,5 @@
     }
   </script>
 </body>
+
 </html>

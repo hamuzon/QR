@@ -5,6 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image QR Scanner</title>
+  <meta name="description" content="画像ファイル・画像URL・クリップボード貼り付け画像からQRコードを読み取れるオンラインツールです。">
+  <meta name="keywords" content="画像 QRコード 読み取り, QRコード 画像, QRコード スキャナー, 画像QR, QRコード 読み取り, QR code reader">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Image QR Scanner">
+  <meta property="og:description" content="画像ファイル・画像URL・貼り付け画像からQRコードを読み取れるオンラインツールです。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="favicon.ico">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
   <style>
@@ -230,7 +238,6 @@
       ? `&copy; ${yearStr} ${authorLink}`
       : `&copy; ${yearStr} Image QR Scanner`;
 
-    // テンプレートリテラルで多段＆段差をつけて見やすく整理
     footer.innerHTML = `
       ${copyright}
       <p>
@@ -259,7 +266,7 @@
           </a>
         `;
       } else {
-        scanResult.innerText = text; // XSS対策
+        scanResult.innerText = text;
       }
       resultBox.style.display = "block";
     }
@@ -337,7 +344,6 @@
       img.onerror = (e) => {
         let reason = "";
 
-        // 状況ごとに可能な限り細かいエラー要因を特定
         if (!navigator.onLine) {
           reason = "  ・端末がオフライン(インターネット未接続)です\n";
         } else if (pathOrUrl.startsWith("http:") && location.protocol === "https:") {
@@ -354,7 +360,6 @@
 
         const errDetail = e?.type ? ` (イベント: ${e.type})` : "";
 
-        // 読み込みエラー理由を箇条書きで多段に表示
         alert(
           `画像の読み込みに失敗しました。${errDetail}\n\n` +
           "【考えられる具体的な原因】\n" +
