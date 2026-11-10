@@ -122,6 +122,30 @@
       text-decoration: underline;
     }
 
+    a.home-link {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a.home-link:hover {
+      background: #1673e6;
+    }
+
+    .page-layout {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     @media (max-width: 480px) {
       button {
         width: 100%;
@@ -137,6 +161,8 @@
 </head>
 
 <body>
+  <div class="page-layout">
+  <a class="home-link" href="index.html">トップページに戻る / Back to Home</a>
   <main class="container">
     <h1>QR Code Generator</h1>
     <input type="text" id="inputText" placeholder="URL または テキストを入力" autocomplete="off" />
@@ -152,6 +178,7 @@
           ライブラリ</a>を使用しています。</p>
     </footer>
   </main>
+  </div>
 
   <script>
     const baseYear = 2025;

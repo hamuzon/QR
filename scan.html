@@ -191,6 +191,29 @@
     a:hover {
       text-decoration: underline
     }
+
+    a.home-link {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a.home-link:hover {
+      background: var(--accent-hover);
+    }
+
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      width: min(92vw, 520px);
+    }
   </style>
   <style>
     .upload-instruction {
@@ -213,6 +236,8 @@
 </head>
 
 <body>
+  <div class="page-layout">
+  <a class="home-link" href="index.html">トップページに戻る / Back to Home</a>
 
   <main class="container">
     <h1>QR Code Scanner</h1>
@@ -238,6 +263,7 @@
 
     <footer id="footer-copy"></footer>
   </main>
+  </div>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 

@@ -6,11 +6,47 @@
   <meta http-equiv="refresh" content="0; url=qrcode-tools.html">
   <link rel="canonical" href="qrcode-tools.html">
   <title>QRコードツールへ移動</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .page-layout {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    a {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.6rem;
+      background: #3399ff;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a[href="index.html"] {
+      margin: 0;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.85rem;
+    }
+  </style>
   <script>
     window.location.replace('qrcode-tools.html' + window.location.search + window.location.hash);
   </script>
 </head>
 <body>
+  <div class="page-layout">
+  <a href="index.html">トップページに戻る / Back to Home</a>
   <p><a href="qrcode-tools.html">QRコードツールへ移動</a></p>
+  </div>
 </body>
 </html>
