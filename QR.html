@@ -6,11 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Code Generator</title>
   <meta name="description"
-    content="URLやテキストからQRコードを作成できるオンラインツールです。Create QR codes online instantly from URLs or text.">
+    content="URLやテキストからQRコードを作成し、ダウンロードできるオンラインツールです。Create QR codes from URLs or text and download them.">
   <meta name="keywords" content="QRコード 作成, QRコード 生成, QRコード, QR作成, QR code generator, テキスト QRコード, URL QRコード" />
   <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="QR Code Generator" />
-  <meta property="og:description" content="URLやテキストからQRコードを作成できるオンラインツールです。" />
+  <meta property="og:title" content="QR Code Generator | QRコード作成ツール" />
+  <meta property="og:description"
+    content="URLやテキストからQRコードを作成できるオンラインツールです。Create QR codes online from URLs or text." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="icon.svg" />
   <meta name="twitter:card" content="summary" />
@@ -172,7 +173,7 @@
   <a class="home-link" href="index.html">トップページに戻る / Back to Home</a>
   <main class="container">
     <h1>QR Code Generator</h1>
-    <input type="text" id="inputText" placeholder="URL または テキストを入力" autocomplete="off" />
+    <input type="text" id="inputText" placeholder="URL or text / URL または テキストを入力" autocomplete="off" />
     <div>
       <button onclick="handleGenerate()">QR作成</button>
       <button id="downloadBtn" onclick="downloadQRCode()">QRダウンロード</button>
