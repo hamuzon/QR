@@ -305,23 +305,114 @@
     resetBtn.onclick = clearResult;
 
     // --- 3. QRコードの解析処理 ---
+
+    // Canvas に描画して ImageData を取得するヘルパー
+    function drawToCanvas(img, w, h) {
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
+      c.width = w;
+      c.height = h;
+      ctx.drawImage(img, 0, 0, w, h);
+      return ctx.getImageData(0, 0, w, h);
+    }
+
+    // グレースケール化 + コントラスト強化 + 二値化した ImageData を返す
+    function preprocessImageData(imageData) {
+      const src = imageData.data;
+      const out = new Uint8ClampedArray(src.length);
+
+      // 1) グレースケール化して輝度を求める
+      const len = src.length / 4;
+      const gray = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        const off = i * 4;
+        gray[i] = Math.round(src[off] * 0.299 + src[off + 1] * 0.587 + src[off + 2] * 0.114);
+      }
+
+      // 2) 大津の二値化閾値を求める
+      const hist = new Int32Array(256);
+      for (let i = 0; i < len; i++) hist[gray[i]]++;
+
+      let total = len, sumAll = 0;
+      for (let i = 0; i < 256; i++) sumAll += i * hist[i];
+
+      let sumB = 0, wB = 0, maxVar = 0, threshold = 128;
+      for (let t = 0; t < 256; t++) {
+        wB += hist[t];
+        if (wB === 0) continue;
+        const wF = total - wB;
+        if (wF === 0) break;
+        sumB += t * hist[t];
+        const mB = sumB / wB;
+        const mF = (sumAll - sumB) / wF;
+        const between = wB * wF * (mB - mF) * (mB - mF);
+        if (between > maxVar) {
+          maxVar = between;
+          threshold = t;
+        }
+      }
+
+      // 3) 二値化して出力
+      for (let i = 0; i < len; i++) {
+        const v = gray[i] >= threshold ? 255 : 0;
+        const off = i * 4;
+        out[off] = out[off + 1] = out[off + 2] = v;
+        out[off + 3] = 255;
+      }
+      return new ImageData(out, imageData.width, imageData.height);
+    }
+
+    // 複数スケール + 前処理で QR コードを検出する
     function scanImageElement(img) {
       try {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const origW = img.naturalWidth || img.width;
+        const origH = img.naturalHeight || img.height;
 
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        // 試すスケール一覧（元サイズ → 小さい → もっと小さい → やや大きい）
+        const scales = [];
+        const targets = [origW, 1200, 800, 600, 400, 1600];
+        const seen = new Set();
+        for (const tw of targets) {
+          const s = Math.min(tw / origW, tw / origH, 1.0);
+          const key = Math.round(s * 1000);
+          if (!seen.has(key) && s > 0.05) {
+            seen.add(key);
+            scales.push(s);
+          }
+        }
 
-        const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        const code = jsQR(imageData.data, img.width, img.height);
+        for (const scale of scales) {
+          const w = Math.round(origW * scale);
+          const h = Math.round(origH * scale);
+          if (w < 10 || h < 10) continue;
 
-        showResult(code ? code.data : "QRコードが見つかりません");
+          const imageData = drawToCanvas(img, w, h);
+
+          // パス1: そのまま解析
+          const code1 = jsQR(imageData.data, w, h);
+          if (code1) { showResult(code1.data); return; }
+
+          // パス2: 前処理（二値化）してから解析
+          const processed = preprocessImageData(imageData);
+          const code2 = jsQR(processed.data, w, h);
+          if (code2) { showResult(code2.data); return; }
+
+          // パス3: 反転（白黒反転QR対応）してから解析
+          const invData = new Uint8ClampedArray(processed.data.length);
+          for (let i = 0; i < processed.data.length; i += 4) {
+            invData[i] = 255 - processed.data[i];
+            invData[i + 1] = 255 - processed.data[i + 1];
+            invData[i + 2] = 255 - processed.data[i + 2];
+            invData[i + 3] = 255;
+          }
+          const code3 = jsQR(invData, w, h);
+          if (code3) { showResult(code3.data); return; }
+        }
+
+        showResult("QRコードが見つかりません");
 
       } catch (err) {
         console.error(err);
-
         let errorHint = "";
         if (err.name === "SecurityError") {
           errorHint = "  ・CORS制限によるCanvas汚染\n" +
@@ -329,8 +420,6 @@
         } else {
           errorHint = "  " + (err?.message ?? String(err));
         }
-
-        // 解析エラー内容をより細かく表示
         alert(
           "画像の解析に失敗しました。\n\n" +
           "【具体的な原因・詳細】\n" +
