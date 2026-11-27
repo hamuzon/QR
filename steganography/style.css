@@ -369,6 +369,37 @@
       font-size: 0.95rem;
     }
 
+    /* カメラ操作ボタン（scan.html と同じ見た目・挙動） */
+    .camera-controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 320px;
+      justify-items: center;
+    }
+
+    .camera-controls button.action {
+      width: 100%;
+      min-width: 0;
+    }
+
+    /* ライトがある場合のみ2カラムにする */
+    .camera-controls.has-torch {
+      grid-template-columns: 1fr 1fr;
+      max-width: 360px;
+    }
+
+    #torchBtn {
+      background: #ffc107;
+      color: #333;
+      box-shadow: 0 6px 15px rgba(255, 193, 7, 0.45);
+    }
+
+    #torchBtn:hover {
+      background: #e0a800;
+    }
+
     #video {
       display: none;
       width: 100%;

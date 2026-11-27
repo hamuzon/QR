@@ -172,6 +172,7 @@
       const cameraSelect = $("cameraSelect");
       const camStart = $("camStart");
       const camStop = $("camStop");
+      const cameraControls = $("cameraControls");
       const torchBtn = $("torchBtn");
       const video = $("video");
       const readStatus = $("readStatus");
@@ -571,6 +572,7 @@
         torchBtn.style.display = "none";
         torchOn = false;
         torchSupported = false;
+        cameraControls.classList.remove("has-torch");
 
         if (readStatus.textContent === "QRコードを探しています... / Looking for a QR code...") {
           setStatus("", "");
@@ -608,6 +610,7 @@
         const capabilities = track.getCapabilities ? track.getCapabilities() : {};
         torchSupported = !!capabilities.torch;
         torchBtn.style.display = torchSupported ? "inline-block" : "none";
+        cameraControls.classList.toggle("has-torch", torchSupported);
 
         scanning = true;
         lastScan = 0;
@@ -670,7 +673,7 @@
         try {
           torchOn = !torchOn;
           await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-          torchBtn.textContent = torchOn ? "ライトOFF / Torch off" : "ライト / Torch";
+          torchBtn.textContent = torchOn ? "ライトOFF / Torch off" : "ライトON / Torch on";
         } catch (err) {
           return;
         }
