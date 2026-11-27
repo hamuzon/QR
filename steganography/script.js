@@ -413,7 +413,7 @@
         const barcodeText = await html5QrCode.scanFile(file, false);
         if (barcodeText) {
           showResult({ front: barcodeText, version: null, info: null });
-          setStatus("バーコードを読み取りました。 / Barcode scanned: " + barcodeText, "ok");
+          setStatus("内容は読めました。隠されたメッセージ... はありませんでした。 / Front content read. No hidden message was found.", "warn");
           return;
         }
       } catch (e) { }
@@ -425,9 +425,8 @@
         const detected = await detector.detect(img);
         if (detected && detected.length > 0) {
           const val = detected[0].rawValue;
-          const fmt = detected[0].format || "BARCODE";
           showResult({ front: val, version: null, info: null });
-          setStatus(`バーコード (${fmt}) を読み取りました。 / Barcode found.`, "ok");
+          setStatus("内容は読めました。隠されたメッセージ... はありませんでした。 / Front content read. No hidden message was found.", "warn");
           return;
         }
       } catch (e) { }
@@ -855,8 +854,6 @@
     showResult(result);
     if (hidden !== null) {
       setStatus("隠されたメッセージ... を読み取りました。 / Hidden message recovered.", "ok");
-    } else if (result.format && result.format !== "QR_CODE") {
-      setStatus(`バーコード (${result.format}) を読み取りました。 / Barcode scanned: ${front}`, "ok");
     } else {
       setStatus("内容は読めました。隠されたメッセージ... はありませんでした。 / Front content read. No hidden message was found.", "warn");
     }
