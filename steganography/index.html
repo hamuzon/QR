@@ -92,17 +92,18 @@
           <p class="hint">または、この画面に画像をペースト (Ctrl+V)<br>Or paste an image onto this screen (Ctrl+V)</p>
         </div>
 
-        <div class="read-section">
+        <div class="read-section camera-section">
           <h2>カメラ / Camera</h2>
           <select id="cameraSelect" aria-label="カメラを選択">
             <option value="">カメラを読み込んでいます... / Loading cameras...</option>
           </select>
-          <div class="button-row camera-controls" id="cameraControls">
-            <button class="action" id="camStart">カメラ起動 / Start camera</button>
-            <button class="action secondary" id="camStop" style="display:none">停止 / Stop</button>
-            <button class="action secondary" id="torchBtn" style="display:none">ライトON / Torch on</button>
+          <div class="camera-controls" id="cameraControls">
+            <button class="action" id="camToggleBtn">カメラ起動 / Start camera</button>
+            <button class="action" id="torchBtn">ライト起動 / Torch</button>
           </div>
-          <video id="video" playsinline muted></video>
+          <div class="camera-reader-wrap" id="readerWrap">
+            <div id="reader" class="camera-reader"></div>
+          </div>
         </div>
 
         <p class="status" id="readStatus"></p>
@@ -112,7 +113,7 @@
             <span class="k">内容 / Front</span>
             <div class="v" id="outFront"></div>
           </div>
-          <div class="result-item">
+          <div class="result-item" id="hiddenItem">
             <span class="k">隠されたメッセージ... / Hidden message ...</span>
             <div class="v" id="outHidden"></div>
           </div>
@@ -125,6 +126,7 @@
   </div>
 
   <script src="qrsteg.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
   <script src="script.js"></script>
 </body>

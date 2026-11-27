@@ -8,18 +8,15 @@
       --bg: linear-gradient(180deg, #f9e6e7 0%, #fce8d8 30%, #d9f0e6 70%, #a8d0e6 100%);
       --font-main: 'Inter', 'Segoe UI', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
     }
-
     * {
       box-sizing: border-box;
     }
-
     html,
     body {
       width: 100%;
       min-height: 100%;
       margin: 0;
     }
-
     body {
       display: flex;
       justify-content: center;
@@ -30,14 +27,12 @@
       font-family: var(--font-main);
       color: #333;
     }
-
     .page-layout {
       width: min(100%, 600px);
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
-
     a.home-link {
       display: inline-block;
       align-self: flex-start;
@@ -49,11 +44,9 @@
       font-weight: bold;
       text-decoration: none;
     }
-
     a.home-link:hover {
       background: var(--accent-hover);
     }
-
     main.container {
       display: flex;
       flex-direction: column;
@@ -68,28 +61,24 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       text-align: center;
     }
-
     .page-header {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.3rem;
     }
-
     h1 {
       margin: 0;
       font-size: 1.8rem;
       line-height: 1.25;
       color: #333;
     }
-
     .subtitle {
       margin: 0;
       font-size: 1rem;
       font-weight: 600;
       color: #555;
     }
-
     .lead {
       max-width: 520px;
       margin: 0;
@@ -97,14 +86,12 @@
       line-height: 1.6;
       color: #555;
     }
-
     .tab-selector {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 0.25rem;
     }
-
     .tab-btn {
       padding: 0.55rem 1.15rem;
       border: none;
@@ -117,12 +104,10 @@
       box-shadow: 0 3px 6px rgba(51, 153, 255, 0.3);
       transition: background 0.3s;
     }
-
     .tab-btn.active,
     .tab-btn:hover {
       background: var(--accent);
     }
-
     .panel {
       display: none;
       flex-direction: column;
@@ -130,11 +115,9 @@
       gap: 1rem;
       width: 100%;
     }
-
     .panel.active {
       display: flex;
     }
-
     .form-stack {
       display: flex;
       flex-direction: column;
@@ -142,7 +125,6 @@
       gap: 0.9rem;
       width: 100%;
     }
-
     .field {
       display: flex;
       flex-direction: column;
@@ -154,7 +136,6 @@
       color: #444;
       text-align: center;
     }
-
     input[type="text"],
     textarea,
     select,
@@ -171,20 +152,17 @@
       outline: none;
       text-align: center;
     }
-
     textarea {
       min-height: 96px;
       resize: vertical;
       text-align: left;
     }
-
     input:focus,
     textarea:focus,
     select:focus {
       border-color: var(--accent-hover);
       background: #f0f8ff;
     }
-
     button.action {
       width: 100%;
       max-width: 320px;
@@ -199,24 +177,19 @@
       box-shadow: 0 6px 15px rgba(51, 153, 255, 0.5);
       transition: background 0.3s, transform 0.2s;
     }
-
     button.action:hover {
       background: var(--accent-hover);
     }
-
     button.action:active {
       transform: scale(0.98);
     }
-
     button.action.secondary {
       background: #6c757d;
       box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
     }
-
     button.action.secondary:hover {
       background: #5a6268;
     }
-
     .preview {
       display: none;
       flex-direction: column;
@@ -224,11 +197,9 @@
       gap: 0.8rem;
       width: 100%;
     }
-
     .preview.visible {
       display: flex;
     }
-
     #qr {
       width: 100%;
       max-width: 260px;
@@ -238,7 +209,6 @@
       background: #fff;
       image-rendering: pixelated;
     }
-
     a.download {
       display: inline-block;
       padding: 0.75rem 1.3rem;
@@ -249,11 +219,9 @@
       text-decoration: none;
       box-shadow: 0 6px 15px rgba(40, 167, 69, 0.35);
     }
-
     a.download:hover {
       background: #1e7e34;
     }
-
     .note {
       max-width: 520px;
       margin: 0;
@@ -265,26 +233,21 @@
       font-size: 0.78rem;
       line-height: 1.6;
     }
-
     .status {
       min-height: 1.4rem;
       margin: 0;
       font-size: 0.85rem;
       line-height: 1.5;
     }
-
     .status.ok {
       color: #1a7f37;
     }
-
     .status.error {
       color: var(--error);
     }
-
     .status.warn {
       color: #9a6700;
     }
-
     .read-section {
       display: flex;
       flex-direction: column;
@@ -296,33 +259,28 @@
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.55);
     }
-
     .read-section h2 {
       margin: 0;
       color: var(--accent-hover);
       font-size: 0.95rem;
     }
-
     .url-row {
       display: flex;
       gap: 0.5rem;
       width: 100%;
       max-width: 480px;
     }
-
     .url-row input {
       flex: 1;
       max-width: none;
       text-align: left;
     }
-
     .url-row button {
       width: auto;
       min-width: 90px;
       padding: 0 1rem;
       font-size: 0.95rem;
     }
-
     .file-drop {
       display: flex;
       align-items: center;
@@ -339,22 +297,18 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-
     .file-drop.dragover {
       background: #e7f2ff;
     }
-
     .file-drop input {
       display: none;
     }
-
     .hint {
       margin: 0;
       color: #666;
       font-size: 0.8rem;
       line-height: 1.5;
     }
-
     .button-row {
       display: flex;
       flex-wrap: wrap;
@@ -362,52 +316,65 @@
       gap: 0.5rem;
       width: 100%;
     }
-
     .button-row button.action {
       width: auto;
       min-width: 140px;
       font-size: 0.95rem;
     }
-
-    /* カメラ操作ボタン（scan.html と同じ見た目・挙動） */
     .camera-controls {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.75rem;
-      width: 100%;
-      max-width: 320px;
+      gap: 1rem;
+      width: 80%;
+      max-width: 260px;
       justify-items: center;
+      margin: 0 auto;
     }
-
     .camera-controls button.action {
       width: 100%;
-      min-width: 0;
+      margin: 0;
     }
-
-    /* ライトがある場合のみ2カラムにする */
-    .camera-controls.has-torch {
+    .camera-controls.active.has-torch {
       grid-template-columns: 1fr 1fr;
-      max-width: 360px;
+      width: 100%;
+      max-width: 320px;
     }
-
     #torchBtn {
-      background: #ffc107;
+      display: none;
+      background-color: #ffc107;
       color: #333;
       box-shadow: 0 6px 15px rgba(255, 193, 7, 0.45);
     }
-
     #torchBtn:hover {
-      background: #e0a800;
+      background-color: #e0a800;
     }
-
-    #video {
+    .camera-reader-wrap {
       display: none;
+      position: relative;
       width: 100%;
-      max-width: 420px;
-      border-radius: 14px;
+      max-width: 440px;
+      margin: 0.5rem auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
       background: #000;
     }
-
+    .camera-reader-wrap.active {
+      display: block;
+    }
+    .camera-reader-wrap.scanned #qr-shaded-region div,
+    .camera-reader-wrap.scanned #reader__scan_region div[style*="border"] {
+      border-color: #ffc107 !important;
+    }
+    .camera-reader-wrap.scanned #qr-shaded-region svg path,
+    .camera-reader-wrap.scanned #qr-shaded-region svg line,
+    .camera-reader-wrap.scanned #qr-shaded-region svg rect {
+      stroke: #ffc107 !important;
+    }
+    .read-section.camera-section {
+      padding-left: 0.4rem;
+      padding-right: 0.4rem;
+    }
     .result-box {
       display: none;
       flex-direction: column;
@@ -418,16 +385,13 @@
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.6);
     }
-
     .result-box.visible {
       display: flex;
     }
-
     .result-item {
       width: 100%;
       text-align: left;
     }
-
     .result-item .k {
       display: block;
       margin-bottom: 0.25rem;
@@ -436,22 +400,18 @@
       font-weight: 700;
       letter-spacing: 0.02em;
     }
-
     .result-item .v {
       font-size: 0.95rem;
       line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-word;
     }
-
     .result-item .v.muted {
       color: #888;
     }
-
     .result-item .v a {
       color: var(--link);
     }
-
     footer {
       margin-top: 0.5rem;
       color: #555;
@@ -459,47 +419,37 @@
       line-height: 1.6;
       text-align: center;
     }
-
     footer a {
       color: var(--link);
       text-decoration: none;
     }
-
     footer a:hover {
       text-decoration: underline;
     }
-
     footer p {
       margin: 0.25rem 0;
     }
-
     .trademark {
       font-size: 0.75rem;
       color: #666;
     }
-
     @media (max-width: 520px) {
       body {
         padding: 1rem 0.75rem;
       }
-
       main.container {
         padding: 1.5rem 1rem;
         border-radius: 20px;
       }
-
       h1 {
         font-size: 1.5rem;
       }
-
       .url-row {
         flex-direction: column;
       }
-
       .url-row button {
         width: 100%;
       }
-
       .button-row button.action {
         width: 100%;
       }
