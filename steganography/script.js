@@ -550,6 +550,7 @@
   let videoEl = null;
   let raf = null;
   let scanning = false;
+  let isSwitchingCamera = false;
   let lastScan = 0;
   let torchOn = false;
   let torchSupported = false;
@@ -566,7 +567,15 @@
       }, 300);
     }
   }
-  async function listCameras() {
+  function getVideoTrack() {
+    if (!videoEl) videoEl = readerEl.querySelector("video");
+    if (videoEl && videoEl.srcObject && typeof videoEl.srcObject.getVideoTracks === "function") {
+      const tracks = videoEl.srcObject.getVideoTracks();
+      if (tracks && tracks.length > 0) return tracks[0];
+    }
+    return null;
+  }
+  async function listCameras(preserveSelection = true) {
     if (typeof Html5Qrcode === "undefined") return;
     const loadingTimer = setTimeout(() => {
       const first = cameraSelect.options[0];
@@ -577,7 +586,7 @@
     try {
       const cameras = await Html5Qrcode.getCameras();
       clearTimeout(loadingTimer);
-      const current = cameraSelect.value;
+      const currentVal = cameraSelect.value;
       cameraSelect.innerHTML = "";
       if (!cameras || !cameras.length) {
         const option = document.createElement("option");
@@ -592,40 +601,111 @@
         option.textContent = camera.label || "カメラ " + (index + 1);
         cameraSelect.appendChild(option);
       });
-      if (current && cameras.some((camera) => camera.id === current)) {
-        cameraSelect.value = current;
+      if (preserveSelection && currentVal && cameras.some((camera) => camera.id === currentVal)) {
+        cameraSelect.value = currentVal;
       } else {
-        const back = cameras.find((camera) => /back|rear|environment/i.test(camera.label || ""));
-        if (back) cameraSelect.value = back.id;
+        const track = getVideoTrack();
+        const activeDeviceId = track && typeof track.getSettings === "function" ? track.getSettings().deviceId : null;
+        if (activeDeviceId && cameras.some((camera) => camera.id === activeDeviceId)) {
+          cameraSelect.value = activeDeviceId;
+        } else {
+          const back = cameras.find((camera) => /back|rear|environment/i.test(camera.label || ""));
+          if (back) {
+            cameraSelect.value = back.id;
+          } else {
+            cameraSelect.value = cameras[0].id;
+          }
+        }
       }
     } catch (err) {
       clearTimeout(loadingTimer);
-      const option = document.createElement("option");
-      option.value = "";
-      option.textContent = "カメラ権限が必要です / Camera permission required";
-      cameraSelect.innerHTML = "";
-      cameraSelect.appendChild(option);
+      if (!cameraSelect.options.length || cameraSelect.value === "") {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "カメラ権限が必要です / Camera permission required";
+        cameraSelect.innerHTML = "";
+        cameraSelect.appendChild(option);
+      }
     }
   }
-  listCameras();
+  listCameras(false);
   function checkTorchCapability() {
-    try {
-      const capabilities = html5QrCode.getRunningTrackCapabilities() || {};
-      torchSupported = !!capabilities.torch;
-    } catch (err) {
+    if (!scanning) {
       torchSupported = false;
+      torchBtn.style.display = "none";
+      cameraControls.classList.remove("has-torch");
+      return;
     }
+    let hasTorch = false;
+    const track = getVideoTrack();
+    if (track && typeof track.getCapabilities === "function") {
+      try {
+        const caps = track.getCapabilities();
+        if (caps && caps.torch) {
+          hasTorch = true;
+        }
+      } catch (err) { }
+    }
+    if (!hasTorch && html5QrCode) {
+      try {
+        if (typeof html5QrCode.getRunningTrackCapabilities === "function") {
+          const caps = html5QrCode.getRunningTrackCapabilities();
+          if (caps && caps.torch) hasTorch = true;
+        }
+      } catch (err) { }
+      try {
+        if (!hasTorch && typeof html5QrCode.getRunningTrackCameraCapabilities === "function") {
+          const camCaps = html5QrCode.getRunningTrackCameraCapabilities();
+          if (camCaps && typeof camCaps.hasTorch === "function" && camCaps.hasTorch()) {
+            hasTorch = true;
+          }
+        }
+      } catch (err) { }
+    }
+    torchSupported = hasTorch;
     if (torchSupported) {
       torchBtn.style.display = "inline-block";
       cameraControls.classList.add("has-torch");
     } else {
       torchBtn.style.display = "none";
       cameraControls.classList.remove("has-torch");
+      torchOn = false;
+      torchBtn.textContent = "ライト起動 / Torch";
+    }
+  }
+  async function toggleTorch() {
+    if (!scanning || !torchSupported) return;
+    const nextState = !torchOn;
+    let applied = false;
+    const track = getVideoTrack();
+    if (track && typeof track.applyConstraints === "function") {
+      try {
+        await track.applyConstraints({ advanced: [{ torch: nextState }] });
+        applied = true;
+      } catch (err) {
+        console.warn("Direct track torch applyConstraints failed:", err);
+      }
+    }
+    if (!applied && html5QrCode && typeof html5QrCode.applyVideoConstraints === "function") {
+      try {
+        await html5QrCode.applyVideoConstraints({ advanced: [{ torch: nextState }] });
+        applied = true;
+      } catch (err) {
+        console.warn("html5QrCode applyVideoConstraints failed:", err);
+      }
+    }
+    if (applied) {
+      torchOn = nextState;
+      torchBtn.textContent = torchOn ? "ライトOFF / Torch off" : "ライトON / Torch on";
+    } else {
+      alert("ライトの切り替えに失敗しました / Failed to toggle torch");
     }
   }
   function resetCameraUI() {
     camToggleBtn.textContent = "カメラ起動 / Start camera";
     camToggleBtn.classList.remove("secondary");
+    camToggleBtn.disabled = false;
+    cameraSelect.disabled = false;
     torchBtn.style.display = "none";
     torchBtn.textContent = "ライト起動 / Torch";
     torchOn = false;
@@ -634,7 +714,7 @@
     cameraControls.classList.remove("has-torch");
     if (readerWrap) readerWrap.classList.remove("active", "scanned");
   }
-  async function stopCamera() {
+  async function stopCamera(keepReaderActive = false) {
     scanning = false;
     if (raf) cancelAnimationFrame(raf);
     raf = null;
@@ -642,23 +722,22 @@
     if (html5QrCode && html5QrCode.isScanning) {
       try {
         await html5QrCode.stop();
-      } catch (err) { }
+      } catch (err) {
+        console.warn("stopCamera failed:", err);
+      }
     }
-    if (html5QrCode) {
-      try {
-        html5QrCode.clear();
-      } catch (err) { }
-    }
-    readerEl.classList.remove("active");
-    if (readerWrap) readerWrap.classList.remove("active");
-    resetCameraUI();
-    lastShownFront = null;
-    lastShownHidden = null;
-    if (/探しています/.test(readStatus.textContent)) {
-      setStatus("", "");
+    if (!keepReaderActive) {
+      readerEl.classList.remove("active");
+      if (readerWrap) readerWrap.classList.remove("active");
+      resetCameraUI();
+      lastShownFront = null;
+      lastShownHidden = null;
+      if (/探しています/.test(readStatus.textContent)) {
+        setStatus("", "");
+      }
     }
   }
-  async function startCamera() {
+  async function startCamera(specificDeviceId) {
     if (!html5QrCode) {
       setReadError("カメラ機能を読み込めませんでした / Could not load the camera library.");
       return;
@@ -670,44 +749,64 @@
     lastShownHidden = null;
     readerEl.classList.add("active");
     if (readerWrap) readerWrap.classList.add("active");
-    const deviceId = cameraSelect.value;
-    const cameraConfig = deviceId ? deviceId : { facingMode: "environment" };
+    const targetDeviceId = specificDeviceId || cameraSelect.value;
+    const cameraConfig = targetDeviceId ? targetDeviceId : { facingMode: "environment" };
+    const scanConfig = {
+      fps: 10,
+      qrbox: (viewfinderWidth, viewfinderHeight) => {
+        const maxWidth = Math.max(50, viewfinderWidth - 20);
+        const maxHeight = Math.max(50, viewfinderHeight - 20);
+        const width = Math.min(maxWidth, Math.max(270, Math.floor(viewfinderWidth * 0.9)));
+        const height = Math.min(maxHeight, Math.max(230, Math.floor(width * 0.82)));
+        return { width, height };
+      }
+    };
     try {
       await html5QrCode.start(
         cameraConfig,
-        {
-          fps: 10,
-          qrbox: (viewfinderWidth, viewfinderHeight) => {
-            const maxWidth = Math.max(50, viewfinderWidth - 20);
-            const maxHeight = Math.max(50, viewfinderHeight - 20);
-            const width = Math.min(maxWidth, Math.max(270, Math.floor(viewfinderWidth * 0.9)));
-            const height = Math.min(maxHeight, Math.max(230, Math.floor(width * 0.82)));
-            return { width, height };
-          },
-          videoConstraints: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        },
+        scanConfig,
         (decodedText, decodedResult) => handleCameraHit(decodedText, decodedResult),
         () => { }
       );
     } catch (err) {
-      readerEl.classList.remove("active");
-      if (readerWrap) readerWrap.classList.remove("active");
-      setReadError("カメラを使えませんでした。ブラウザのカメラ権限を確認してください。 / Could not access the camera. Check the camera permission.");
-      return;
+      let fallbackSuccess = false;
+      if (targetDeviceId) {
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" },
+            scanConfig,
+            (decodedText, decodedResult) => handleCameraHit(decodedText, decodedResult),
+            () => { }
+          );
+          fallbackSuccess = true;
+        } catch (fbErr) {
+          fallbackSuccess = false;
+        }
+      }
+      if (!fallbackSuccess) {
+        readerEl.classList.remove("active");
+        if (readerWrap) readerWrap.classList.remove("active");
+        resetCameraUI();
+        setReadError("カメラを使えませんでした。ブラウザのカメラ権限を確認してください。 / Could not access the camera. Check the camera permission.");
+        return;
+      }
     }
     camToggleBtn.textContent = "カメラ停止 / Stop camera";
     camToggleBtn.classList.add("secondary");
     cameraControls.classList.add("active");
     videoEl = readerEl.querySelector("video");
-    checkTorchCapability();
-    setTimeout(checkTorchCapability, 500);
     scanning = true;
     lastScan = 0;
     raf = requestAnimationFrame(scanFrame);
-    await listCameras();
+    checkTorchCapability();
+    setTimeout(checkTorchCapability, 200);
+    setTimeout(checkTorchCapability, 600);
+    setTimeout(checkTorchCapability, 1200);
+    if (videoEl) {
+      videoEl.addEventListener("loadedmetadata", checkTorchCapability, { once: true });
+      videoEl.addEventListener("play", checkTorchCapability, { once: true });
+    }
+    await listCameras(true);
   }
   function captureCurrentFrame() {
     if (!videoEl) videoEl = readerEl.querySelector("video");
@@ -776,7 +875,7 @@
     applyCameraResult(result);
   }
   function scanFrame(timestamp) {
-    if (!scanning) return;
+    if (!scanning || isSwitchingCamera) return;
     raf = requestAnimationFrame(scanFrame);
     if (timestamp - lastScan < 200) return;
     lastScan = timestamp;
@@ -791,6 +890,7 @@
     applyCameraResult(result);
   }
   camToggleBtn.addEventListener("click", () => {
+    if (isSwitchingCamera) return;
     if (scanning) {
       stopCamera();
     } else {
@@ -798,21 +898,30 @@
     }
   });
   cameraSelect.addEventListener("change", async () => {
+    const selectedId = cameraSelect.value;
+    if (!selectedId) return;
     if (scanning) {
-      await stopCamera();
-      startCamera();
+      if (isSwitchingCamera) return;
+      isSwitchingCamera = true;
+      cameraSelect.disabled = true;
+      camToggleBtn.disabled = true;
+      torchBtn.style.display = "none";
+      torchOn = false;
+      torchBtn.textContent = "ライト起動 / Torch";
+      cameraControls.classList.remove("has-torch");
+      try {
+        await stopCamera(true);
+        await startCamera(selectedId);
+      } catch (err) {
+        console.error("Camera switch failed:", err);
+      } finally {
+        isSwitchingCamera = false;
+        cameraSelect.disabled = false;
+        camToggleBtn.disabled = false;
+      }
     }
   });
-  torchBtn.addEventListener("click", async () => {
-    if (!html5QrCode || !scanning || !torchSupported) return;
-    try {
-      await html5QrCode.applyVideoConstraints({ advanced: [{ torch: !torchOn }] });
-      torchOn = !torchOn;
-      torchBtn.textContent = torchOn ? "ライトOFF / Torch off" : "ライトON / Torch on";
-    } catch (err) {
-      alert("ライトの切り替えに失敗しました / Failed to toggle torch");
-    }
-  });
+  torchBtn.addEventListener("click", toggleTorch);
   resetBtn.addEventListener("click", () => {
     readOut.classList.remove("visible");
     setStatus("", "");

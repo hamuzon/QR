@@ -183,6 +183,12 @@
     button.action:active {
       transform: scale(0.98);
     }
+    button.action:disabled,
+    select:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
     button.action.secondary {
       background: #6c757d;
       box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
