@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=steganography/index.html">
+  <link rel="canonical" href="steganography/index.html">
+  <title>QRコード・ステガノグラフィへ移動</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .page-layout {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    a {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.6rem;
+      background: #3399ff;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a[href="index.html"] {
+      margin: 0;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.85rem;
+    }
+
+    .trademark {
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.5;
+      margin-top: 1rem;
+    }
+  </style>
+  <script>
+    window.location.replace('steganography/index.html' + window.location.search + window.location.hash);
+  </script>
+</head>
+<body>
+  <div class="page-layout">
+  <a href="index.html">トップページに戻る / Back to Home</a>
+  <p><a href="steganography/index.html">QRコード・ステガノグラフィへ移動</a></p>
+  <p class="trademark">
+    ※QRコードは（株）デンソーウェーブの登録商標です。<br />
+    "QR Code" is a registered trademark of DENSO WAVE INCORPORATED.
+  </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QRコード・ステガノグラフィ – QR Code Steganography</title>
+  <meta name="description" content="QRコードの誤り訂正の余力に秘密のメッセージを隠せるステガノグラフィツール。表の内容は普通のQRコードとして読め、URL・画像ファイル・カメラから隠しメッセージを取り出せます。Hide a secret message in a QR code's error-correction capacity.">
+  <meta name="keywords" content="QRコード ステガノグラフィ, QRコード 隠しメッセージ, QRコード 秘密, 誤り訂正, QRコード 作成, QR code steganography, QR code hidden message, stego, QR secret">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="QRコード・ステガノグラフィ – QR Code Steganography">
+  <meta property="og:description" content="QRコードの誤り訂正の余力に秘密のメッセージを隠せるツール。表の内容は普通のQRコードとして読めます。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="QR Code Steganography">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:image" content="../icon.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="QRコード・ステガノグラフィ – QR Code Steganography">
+  <meta name="twitter:description" content="QRコードの誤り訂正の余力に秘密のメッセージを隠せるツール。">
+  <meta name="twitter:image" content="../icon.svg">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="page-layout">
+    <a class="home-link" href="../index.html">トップページに戻る / Back to Home</a>
+
+    <main class="container">
+      <header class="page-header">
+        <h1>QR Code Steganography</h1>
+        <p class="subtitle">QRコード・ステガノグラフィ</p>
+      </header>
+
+      <p class="lead">
+        QRコードの誤り訂正の余力に、もうひとつのメッセージを隠せます。<br>
+        Hide a second message inside the error-correction capacity of a QR code.
+      </p>
+
+      <div class="tab-selector">
+        <button class="tab-btn active" data-panel="panel-make">作る / Make</button>
+        <button class="tab-btn" data-panel="panel-read">読む / Read</button>
+      </div>
+
+      <section class="panel active" id="panel-make">
+        <div class="form-stack">
+          <label class="field">
+            <span>普通のQRコードリーダーで読める中身（URLなど） / Front content</span>
+            <input type="text" id="front" placeholder="https://example.com/" autocomplete="off">
+          </label>
+
+          <label class="field">
+            <span>隠しておく中身 / Hidden message</span>
+            <textarea id="hidden" placeholder="秘密のメッセージ / Secret message"></textarea>
+          </label>
+
+          <div class="button-row">
+            <button class="action" id="makeBtn">QRコードを作成 / Generate QR</button>
+            <button class="action secondary" id="resetMakeBtn">リセット / Reset</button>
+          </div>
+        </div>
+
+        <div class="preview" id="makeOut">
+          <canvas id="qr" width="300" height="300"></canvas>
+
+          <a class="download" id="download" href="#" download="qrcode.png">画像をダウンロード / Download image</a>
+        </div>
+
+        <p class="status" id="makeStatus"></p>
+
+        <p class="note">
+          表の内容は通常のQRコードとして読み取れます。隠しメッセージは誤り訂正コードの余力に埋め込まれます。<br>
+          The visible content reads as a normal QR code. The hidden message is stored in the spare error-correction capacity.
+        </p>
+      </section>
+
+      <section class="panel" id="panel-read">
+        <div class="read-section">
+          <h2>画像URL / Image URL</h2>
+          <div class="url-row">
+            <input type="text" id="urlInput" placeholder="https://example.com/qrcode.png" autocomplete="off">
+            <button class="action" id="urlBtn">読込 / Load</button>
+          </div>
+        </div>
+
+        <div class="read-section">
+          <h2>画像ファイル / Image file</h2>
+          <label class="file-drop" id="dropZone">
+            <input type="file" id="fileInput" accept="image/*">
+            <span>画像を選択 / Choose an image</span>
+          </label>
+          <p class="hint">または、この画面に画像をペースト (Ctrl+V)<br>Or paste an image onto this screen (Ctrl+V)</p>
+        </div>
+
+        <div class="read-section">
+          <h2>カメラ / Camera</h2>
+          <select id="cameraSelect" aria-label="カメラを選択">
+            <option value="">カメラを読み込んでいます... / Loading cameras...</option>
+          </select>
+          <div class="button-row">
+            <button class="action" id="camStart">カメラ起動 / Start camera</button>
+            <button class="action secondary" id="camStop" style="display:none">停止 / Stop</button>
+            <button class="action secondary" id="torchBtn" style="display:none">ライト / Torch</button>
+          </div>
+          <video id="video" playsinline muted></video>
+        </div>
+
+        <p class="status" id="readStatus"></p>
+
+        <div class="result-box" id="readOut">
+          <div class="result-item">
+            <span class="k">内容 / Front</span>
+            <div class="v" id="outFront"></div>
+          </div>
+          <div class="result-item">
+            <span class="k">隠されたメッセージ... / Hidden message ...</span>
+            <div class="v" id="outHidden"></div>
+          </div>
+          <button class="action secondary" id="resetBtn">閉じる / Close</button>
+        </div>
+      </section>
+
+      <footer id="footer-copy"></footer>
+    </main>
+  </div>
+
+  <script src="qrsteg.js"></script>
+  <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
