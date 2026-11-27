@@ -34,3 +34,9 @@ Please see the [LICENSE](./LICENSE) file for details.
   - URL: [https://github.com/cozmo/jsQR](https://github.com/cozmo/jsQR)
 
   ---
+
+## ™️ 商標 / Trademark
+
+※QRコードは（株）デンソーウェーブの登録商標です。
+
+"QR Code" is a registered trademark of DENSO WAVE INCORPORATED.

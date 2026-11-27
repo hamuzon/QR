@@ -160,7 +160,11 @@
       } else {
         footerHTML = `&copy; ${yearString} QR Tools`;
       }
-      footer.innerHTML = footerHTML;
+      footer.innerHTML = footerHTML + `
+        <p class="trademark">
+          ※QRコードは（株）デンソーウェーブの登録商標です。<br />
+          "QR Code" is a registered trademark of DENSO WAVE INCORPORATED.
+        </p>`;
     })();
   </script>
 </body>

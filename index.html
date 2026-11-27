@@ -249,6 +249,10 @@
 
   <footer id="footer-copy">
     &copy; 2025 QR Tools Hub
+    <p class="trademark">
+      ※QRコードは（株）デンソーウェーブの登録商標です。<br />
+      "QR Code" is a registered trademark of DENSO WAVE INCORPORATED.
+    </p>
   </footer>
 
   <script>
@@ -270,7 +274,11 @@
     } else {
       footerHTML = `&copy; ${yearString} QR Tools Hub`;
     }
-    footer.innerHTML = footerHTML;
+    footer.innerHTML = footerHTML + `
+      <p class="trademark">
+        ※QRコードは（株）デンソーウェーブの登録商標です。<br />
+        "QR Code" is a registered trademark of DENSO WAVE INCORPORATED.
+      </p>`;
   </script>
 
 </body>
