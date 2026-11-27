@@ -432,7 +432,7 @@
         }
       } catch (e) { }
     }
-    setReadError("QRコード / バーコードが見つかりませんでした / No QR code or barcode was found.");
+    setReadError("QRコードが見つかりませんでした / No QR code was found.");
   }
   function loadImageFromFile(file) {
     return new Promise((resolve, reject) => {
@@ -883,7 +883,7 @@
     const result = decodeCurrentFrame(needVariants);
     if (!result) {
       if (lastShownFront === null) {
-        setStatus("QRコード / バーコードを探しています... / Looking for a QR code or barcode...", "");
+        setStatus("QRコードを探しています... / Looking for a QR code...", "");
       }
       return;
     }
